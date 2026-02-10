@@ -1,37 +1,24 @@
 'use client'
 
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '@/app/store'
-import { fetchOrders, deleteOrder } from '@/entities/order/model/order-slice'
-import { Product } from '@/entities/order/model/types'
+import { useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '@/app/store'
+import { fetchOrders, selectOrder } from '@/entities/order/model/order-slice'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './orders.module.scss'
 import {
   formatDateForOrder,
   formatDateShort,
 } from '@/shared/lib/date/format-date'
+import { OrderDeleteModal } from '@/widgets/order-delete-modal/ui/order-delete-modal'
+import { calculateTotal } from '@/entities/order/lib/calculate-order-total'
 
 export default function OrdersPage() {
-  const dispatch = useDispatch<AppDispatch>()
-  const { list: orders, isLoading } = useSelector(
-    (state: RootState) => state.order
-  )
+  const dispatch = useAppDispatch()
+  const { list: orders, isLoading } = useAppSelector((state) => state.order)
 
   useEffect(() => {
     dispatch(fetchOrders())
   }, [dispatch])
-
-  const calculateTotal = (
-    products: Product[],
-    symbol: 'USD' | 'UAH'
-  ): number => {
-    return products.reduce((acc, product) => {
-      const priceObj = product.price.find((p) => p.symbol === symbol)
-
-      return acc + (priceObj ? Number(priceObj.value) : 0)
-    }, 0)
-  }
 
   if (isLoading)
     return <div className="p-5 text-center">Загрузка приходов...</div>
@@ -90,7 +77,7 @@ export default function OrdersPage() {
 
               <button
                 className={styles.deleteBtn}
-                onClick={() => dispatch(deleteOrder(order.id))}
+                onClick={() => dispatch(selectOrder(order.id))}
               >
                 🗑
               </button>
@@ -98,6 +85,7 @@ export default function OrdersPage() {
           ))}
         </AnimatePresence>
       </div>
+      <OrderDeleteModal />
     </div>
   )
 }

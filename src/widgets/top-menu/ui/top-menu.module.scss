@@ -12,7 +12,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 50px;
-  z-index: 101;
+  z-index: 60;
 }
 
 .logoBlock {
@@ -35,6 +35,7 @@
 .infoBlock {
   display: flex;
   align-items: center;
+  color: black;
 }
 
 .dateBlock {

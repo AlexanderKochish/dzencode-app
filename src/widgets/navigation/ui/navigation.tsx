@@ -1,9 +1,9 @@
 'use client'
 
-import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import styles from './navigation.module.scss'
+import Image from 'next/image'
 
 export const Navigation = () => {
   const pathname = usePathname()
@@ -20,7 +20,16 @@ export const Navigation = () => {
     <div className={styles.navigation}>
       <div className={styles.userBlock}>
         <div className={styles.avatarWrapper}>
-          <div className={styles.avatarPlaceholder} />
+          <div className={styles.avatarPlaceholder}>
+            <Image
+              src={'/placeholder.jpg'}
+              alt="user avatar"
+              width={100}
+              height={100}
+              className={styles.imgAvatar}
+            />
+          </div>
+
           <button className={styles.settingsBtn}>⚙</button>
         </div>
       </div>

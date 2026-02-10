@@ -12,7 +12,7 @@
   flex-direction: column;
   align-items: center;
   padding-top: 100px;
-  z-index: 100;
+  z-index: 50;
 }
 
 .userBlock {
@@ -32,7 +32,12 @@
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-
+.imgAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 .settingsBtn {
   position: absolute;
   bottom: 0;

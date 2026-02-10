@@ -1,11 +1,12 @@
+'use client'
+
 import React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import styles from './navigation.module.scss'
 
 export const Navigation = () => {
-  const router = useRouter()
+  const pathname = usePathname()
 
   const menuItems = [
     { name: 'ПРИХОД', path: '/orders' },
@@ -29,7 +30,7 @@ export const Navigation = () => {
           <Link
             key={item.path}
             href={item.path}
-            className={`${styles.navLink} ${router.pathname === item.path ? styles.active : ''}`}
+            className={`${styles.navLink} ${pathname === item.path ? styles.active : ''}`}
           >
             {item.name}
           </Link>

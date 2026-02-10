@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.2",
     "@reduxjs/toolkit": "^2.11.2",
     "axios": "^1.13.5",
     "bootstrap": "^5.3.8",
@@ -29,6 +30,10 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "prettier": "3.8.1",
+    "prisma": "^6.19.2",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.ts"
   }
 }

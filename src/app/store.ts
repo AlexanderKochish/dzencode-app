@@ -1,7 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
+import orderReducer from '@/entities/order/model/order-slice'
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    order: orderReducer,
+  },
 })
 
 export type RootState = ReturnType<typeof store.getState>

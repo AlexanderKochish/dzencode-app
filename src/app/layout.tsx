@@ -1,5 +1,7 @@
+import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/app/styles/globals.scss'
 import { MainLayout } from '@/widgets/layout/ui/main-layout'
+import { StoreProvider } from './providers/store-provider'
 
 export const metadata = {
   title: 'Inventory App',
@@ -14,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
-        <MainLayout>{children}</MainLayout>
+        <StoreProvider>
+          <MainLayout>{children}</MainLayout>
+        </StoreProvider>
       </body>
     </html>
   )

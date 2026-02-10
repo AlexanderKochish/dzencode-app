@@ -9,9 +9,7 @@ export const MainLayout = ({ children }: { children: ReactNode }) => {
     <div className="main-layout">
       <TopMenu />
       <Navigation />
-      <main style={{ marginLeft: '250px', marginTop: '80px', padding: '30px' }}>
-        {children}
-      </main>
+      <main className={styles.main}>{children}</main>
     </div>
   )
 }

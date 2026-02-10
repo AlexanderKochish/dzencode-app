@@ -1,0 +1,50 @@
+@import '@/app/styles/variables';
+
+.topMenu {
+  height: $header-height;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 50px;
+  z-index: 101;
+}
+
+.logoBlock {
+  display: flex;
+  align-items: center;
+  width: $nav-width;
+}
+
+.logoText {
+  color: $primary-green;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.searchBlock {
+  flex: 1;
+  max-width: 400px;
+}
+
+.infoBlock {
+  display: flex;
+  align-items: center;
+}
+
+.dateBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 14px;
+}
+
+.time {
+  margin-left: 15px;
+  font-weight: bold;
+}

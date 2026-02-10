@@ -1,0 +1,79 @@
+@import '@/app/styles/variables';
+
+.navigation {
+  width: $nav-width;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: white;
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100px;
+  z-index: 100;
+}
+
+.userBlock {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.avatarWrapper {
+  position: relative;
+}
+
+.avatarPlaceholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #ddd;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.settingsBtn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #777;
+}
+
+.navMenu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.navLink {
+  text-decoration: none;
+  color: $text-dark;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 10px 0;
+  margin: 10px 0;
+  text-transform: uppercase;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+
+  &:hover {
+    color: $primary-green;
+  }
+
+  &.active {
+    color: $text-dark;
+    border-bottom: 3px solid $primary-green;
+  }
+}

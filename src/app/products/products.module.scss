@@ -1,0 +1,144 @@
+.pageContainer {
+  padding: 40px;
+  background-color: #f0f3f5;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 30px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+  }
+
+  .filters {
+    display: flex;
+    gap: 20px;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #666;
+
+      select {
+        padding: 5px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        min-width: 150px;
+      }
+    }
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.row {
+  background: white;
+  border-radius: 6px;
+  padding: 15px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  display: grid;
+  align-items: center;
+
+  grid-template-columns:
+    20px
+    60px
+    minmax(200px, 1.5fr)
+    100px
+    120px
+    80px
+    100px
+    minmax(150px, 1fr)
+    minmax(150px, 1fr)
+    80px
+    30px;
+
+  gap: 15px;
+  font-size: 14px;
+  color: #444;
+
+  transition: box-shadow 0.2s;
+  &:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.status {
+  .dot {
+    font-size: 30px;
+    line-height: 0;
+  }
+  .green {
+    color: #8bc34a;
+  }
+  .black {
+    color: #333;
+  }
+}
+
+.photo img {
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.nameInfo {
+  .title {
+    text-decoration: underline;
+    text-decoration-color: #ddd;
+    margin-bottom: 4px;
+  }
+  .sn {
+    font-size: 12px;
+    color: #888;
+  }
+}
+
+.statusText {
+  color: #2ecc71;
+}
+
+.dates {
+  font-size: 12px;
+  color: #666;
+}
+
+.price {
+  font-size: 13px;
+  .priceRow {
+    margin-bottom: 2px;
+  }
+}
+
+.groupName,
+.orderName {
+  text-decoration: underline;
+  text-decoration-color: #ddd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+    color: #e74c3c;
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
+   
+    "lint": {},
+    "push": {
+        "cache": false,
+        "env": ["DATABASE_URL"] 
+      },
+      "seed": {
+        "cache": false,
+        "env": ["DATABASE_URL"]
+      },
+      "generate": {
+        "cache": false,
+        "env": ["DATABASE_URL"]
+      },
+      "dev": {
+        "cache": false,
+        "persistent": true,
+        "env": ["DATABASE_URL", "REDIS_URL"]
+      },
+      "migrate:deploy": {
+        "cache": false,
+        "env": ["DATABASE_URL"]
+      }
+  }
+}

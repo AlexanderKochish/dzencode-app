@@ -1,39 +1,32 @@
 {
   "name": "dzencode-app",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "packageManager": "npm@11.8.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "db:seed": "turbo run seed --filter=@dzencode/db"
   },
-  "dependencies": {
-    "@prisma/client": "^6.19.2",
-    "@reduxjs/toolkit": "^2.11.2",
-    "axios": "^1.13.5",
-    "bootstrap": "^5.3.8",
-    "framer-motion": "^12.34.0",
-    "next": "16.1.6",
-    "react": "19.2.3",
-    "react-bootstrap": "^2.10.10",
-    "react-dom": "19.2.3",
-    "react-redux": "^9.2.0",
-    "sass": "^1.97.3",
-    "socket.io-client": "^4.8.3"
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexanderKochish/dzencode-app.git"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AlexanderKochish/dzencode-app/issues"
+  },
+  "homepage": "https://github.com/AlexanderKochish/dzencode-app#readme",
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "prettier": "3.8.1",
-    "prisma": "^6.19.2",
-    "typescript": "^5"
-  },
-  "prisma": {
-    "seed": "node prisma/seed.ts"
+    "turbo": "2.8.6"
   }
 }

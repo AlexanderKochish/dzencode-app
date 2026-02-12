@@ -1,0 +1,23 @@
+{
+  "name": "@dzencode/db",
+  "version": "0.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "push": "prisma db push",
+    "seed": "npx tsx prisma/seed.ts",
+    "generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "latest"
+  },
+  "devDependencies": {
+    "@dzencode/tsconfig": "*",
+    "@types/node": "^22.19.11",
+    "prisma": "latest",
+    "tsx": "^4.21.0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}

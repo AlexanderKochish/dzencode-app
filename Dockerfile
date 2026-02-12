@@ -27,14 +27,18 @@ RUN turbo run build
 
 FROM base AS runner
 WORKDIR /app
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+
 COPY --from=builder --chown=nextjs:nodejs /app .
 
-RUN chmod +x ./docker-entrypoint.sh
+RUN sed -i 's/\r$//' ./docker-entrypoint.sh && \
+    chmod +x ./docker-entrypoint.sh
 
 USER nextjs
+
 EXPOSE 3000 3001
 
 ENTRYPOINT ["/bin/sh", "./docker-entrypoint.sh"]

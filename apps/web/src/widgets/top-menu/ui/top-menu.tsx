@@ -1,5 +1,6 @@
 import styles from './top-menu.module.scss'
 import { CurrentTime } from './current-time'
+import { ActiveTabsCounter } from '@/shared/ui/active-tabs-counter/active-tabs-counter'
 
 export const TopMenu = () => {
   return (
@@ -20,7 +21,7 @@ export const TopMenu = () => {
             <CurrentTime />
           </div>
         </div>
-        {/* счетчик сокетов */}
+        <ActiveTabsCounter />
       </div>
     </header>
   )

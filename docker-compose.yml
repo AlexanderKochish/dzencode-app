@@ -12,7 +12,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      # Внутри теста переменные тоже работают
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
@@ -36,6 +35,9 @@ services:
       - SERVICE_TYPE=web
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
       - NODE_ENV=${NODE_ENV}
+      - INTERNAL_API_URL=http://api:3001/graphql
+      - NEXT_PUBLIC_API_URL=http://localhost:3001/graphql
+      - NEXT_PUBLIC_SOCKET_URL=http://localhost:3001
     ports:
       - "${NEXT_PORT:-3000}:3000"
     depends_on:
@@ -53,6 +55,11 @@ services:
       - NODE_ENV=${NODE_ENV}
     ports:
       - "${NEST_PORT:-3001}:3001"
+      - "5555:5555"
+    command: >
+      sh -c "npx prisma migrate dev --name init && 
+             (cd packages/db && npx prisma db seed) && 
+             npm run dev"
     depends_on:
       db:
         condition: service_healthy

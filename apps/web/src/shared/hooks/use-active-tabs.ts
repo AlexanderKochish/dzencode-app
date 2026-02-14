@@ -1,26 +1,25 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { io } from 'socket.io-client'
+import { useSocket } from './use-socket'
 
 export const useActiveTabs = () => {
   const [activeTabs, setActiveTabs] = useState<number>(0)
+  const { socket } = useSocket()
 
   useEffect(() => {
-    const socketUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-    const socket = io(socketUrl, {
-      transports: ['websocket'],
-      withCredentials: true,
-    })
+    if (!socket) return
 
-    socket.on('updateActiveTabs', (count: number) => {
+    const handleUpdate = (count: number) => {
       setActiveTabs(count)
-    })
+    }
+
+    socket.on('updateActiveTabs', handleUpdate)
 
     return () => {
-      socket.disconnect()
+      socket.off('updateActiveTabs', handleUpdate)
     }
-  }, [])
+  }, [socket])
 
   return activeTabs
 }

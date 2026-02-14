@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { IoAdapter } from '@nestjs/platform-socket.io';
@@ -12,14 +13,21 @@ class RedisIoAdapter extends IoAdapter {
   private adapterConstructor!: RedisAdapterConstructor;
 
   async connectToRedis(): Promise<void> {
-    const pubClient = createClient({
-      url: process.env.REDIS_URL || 'redis://redis:6379',
-    });
+    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+
+    console.log(`📡 Connecting to Redis at: ${redisUrl}`);
+
+    const pubClient = createClient({ url: redisUrl });
     const subClient = pubClient.duplicate();
 
-    await Promise.all([pubClient.connect(), subClient.connect()]);
-
-    this.adapterConstructor = createAdapter(pubClient, subClient);
+    try {
+      await Promise.all([pubClient.connect(), subClient.connect()]);
+      this.adapterConstructor = createAdapter(pubClient, subClient);
+      console.log('Redis Adapter connected successfully');
+    } catch (error) {
+      console.error('Redis Adapter connection failed:', error);
+      throw error;
+    }
   }
 
   override createIOServer(port: number, options?: ServerOptions): Server {
@@ -42,9 +50,9 @@ async function bootstrap() {
   });
 
   const port = process.env.PORT ?? 3001;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 
-  console.log(`🚀 API is running on: http://localhost:${port}`);
+  console.log(`API is running on: http://localhost:${port}`);
 }
 
 bootstrap();

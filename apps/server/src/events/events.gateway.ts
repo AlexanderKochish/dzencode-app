@@ -4,7 +4,7 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import { RedisService } from '../redis/redis.service';
 
 @WebSocketGateway({
@@ -21,19 +21,29 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(private readonly redisService: RedisService) {}
 
-  async handleConnection(client: Socket) {
-    const count = await this.redisService.incr(this.TAB_KEY);
+  async handleConnection() {
+    const sockets = await this.server.fetchSockets();
+    const count = sockets.length;
+
+    await this.redisService.set(this.TAB_KEY, count);
+
     this.broadcastCount(count);
-    console.log(`Tab connected. Total: ${count}`);
   }
 
-  async handleDisconnect(client: Socket) {
-    const count = await this.redisService.decr(this.TAB_KEY);
+  async handleDisconnect() {
+    const sockets = await this.server.fetchSockets();
+    const count = sockets.length;
+
+    await this.redisService.set(this.TAB_KEY, count);
+
     this.broadcastCount(count);
-    console.log(`Tab disconnected. Total: ${count}`);
   }
 
   private broadcastCount(count: number) {
     this.server.emit('updateActiveTabs', count);
+  }
+
+  sendToAll(event: string, data: any) {
+    this.server.emit(event, data);
   }
 }

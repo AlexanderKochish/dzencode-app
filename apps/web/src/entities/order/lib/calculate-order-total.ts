@@ -1,12 +1,16 @@
-import { Product } from '../model/types'
+import { Product } from "@/entities/product/model/types"
+
 
 export const calculateTotal = (
-  products: Product[],
+  products: Product[] | undefined,
   symbol: 'USD' | 'UAH'
 ): number => {
-  return products.reduce((acc, product) => {
-    const priceObj = product.price.find((p) => p.symbol === symbol)
+  if (!products) return 0
 
-    return acc + (priceObj ? Number(priceObj.value) : 0)
+  return products.reduce((acc, product) => {
+    const priceObj = product.price?.find((p) => p.symbol === symbol)
+
+    const value = priceObj ? Number(priceObj.value) : 0
+    return acc + value
   }, 0)
 }

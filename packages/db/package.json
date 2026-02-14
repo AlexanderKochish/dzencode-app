@@ -1,11 +1,13 @@
 {
   "name": "@dzencode/db",
   "version": "0.0.0",
-  "main": "./index.ts",
-  "types": "./index.ts",
+ "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "dev": "tsup index.ts --format cjs,esm --watch --dts",
     "push": "prisma db push",
-    "seed": "npx tsx prisma/seed.ts",
     "generate": "prisma generate"
   },
   "dependencies": {
@@ -15,7 +17,8 @@
     "@dzencode/tsconfig": "*",
     "@types/node": "^22.19.11",
     "prisma": "latest",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "tsup": "latest"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

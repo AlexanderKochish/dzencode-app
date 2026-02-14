@@ -1,7 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/app/styles/globals.scss'
 import { MainLayout } from '@/widgets/layout/ui/main-layout'
-import { StoreProvider } from './providers/store-provider'
+import { ApolloProvider } from '@/providers/apollo-provider'
+import { StoreProvider } from '@/providers/store-provider'
+import { SocketProvider } from '@/providers/socket-provider'
 
 export const metadata = {
   title: 'Inventory App',
@@ -16,9 +18,13 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
-        <StoreProvider>
-          <MainLayout>{children}</MainLayout>
-        </StoreProvider>
+        <SocketProvider>
+          <ApolloProvider>
+            <StoreProvider>
+              <MainLayout>{children}</MainLayout>
+            </StoreProvider>
+          </ApolloProvider>
+        </SocketProvider>
       </body>
     </html>
   )

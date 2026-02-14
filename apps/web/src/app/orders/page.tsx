@@ -1,91 +1,28 @@
-'use client'
+import { GET_ORDERS } from '@/entities/order/api/orders.queries'
+import { GetOrdersData } from '@/entities/order/model/types'
+import OrdersPageClient from '@/entities/order/ui/orders/orders-page-client'
+import { getClient } from '@/shared/lib/apollo-client'
+import { EmptyState } from '@/shared/ui/empty-state/empty-state'
 
-import { useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from '@/app/store'
-import { fetchOrders, selectOrder } from '@/entities/order/model/order-slice'
-import { motion, AnimatePresence } from 'framer-motion'
-import styles from './orders.module.scss'
-import {
-  formatDateForOrder,
-  formatDateShort,
-} from '@/shared/lib/date/format-date'
-import { OrderDeleteModal } from '@/widgets/order-delete-modal/ui/order-delete-modal'
-import { calculateTotal } from '@/entities/order/lib/calculate-order-total'
+export default async function OrdersPage() {
+  const { data, error } = await getClient().query<GetOrdersData>({
+    query: GET_ORDERS,
+    context: { fetchOptions: { cache: 'no-store' } },
+    errorPolicy: 'all',
+  })
 
-export default function OrdersPage() {
-  const dispatch = useAppDispatch()
-  const { list: orders, isLoading } = useAppSelector((state) => state.order)
+  if (error) {
+    throw error
+  }
 
-  useEffect(() => {
-    dispatch(fetchOrders())
-  }, [dispatch])
+  if (!data || !data.orders) {
+    return (
+      <EmptyState
+        title="Приходы не найдены"
+        description="Список приходов пуст. Добавьте первый приход, чтобы увидеть его здесь."
+      />
+    )
+  }
 
-  if (isLoading)
-    return <div className="p-5 text-center">Загрузка приходов...</div>
-
-  return (
-    <div className={styles.pageContainer}>
-      <div className={styles.header}>
-        <button className={styles.plusBtn}>+</button>
-        <h1>Приходы / {orders.length}</h1>
-      </div>
-
-      <div className={styles.ordersList}>
-        <AnimatePresence>
-          {orders.map((order) => (
-            <motion.div
-              key={order.id}
-              className={styles.orderItem}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className={styles.title}>{order.title}</div>
-
-              <div className={styles.productsCount}>
-                <div className={styles.icon}>☰</div>
-                <div className={styles.count}>
-                  <strong>{order.products.length}</strong>
-                  <span>Продукта</span>
-                </div>
-              </div>
-
-              <div className={styles.dates}>
-                <span className={styles.short}>
-                  {formatDateShort(order.date)}
-                </span>
-                <span className={styles.long}>
-                  {formatDateForOrder(order.date)}
-                </span>
-              </div>
-
-              <div className={styles.prices}>
-                <span className={styles.usd}>
-                  {calculateTotal(order.products, 'USD').toLocaleString(
-                    'ru-RU'
-                  )}{' '}
-                  $
-                </span>
-                <span className={styles.uah}>
-                  {calculateTotal(order.products, 'UAH').toLocaleString(
-                    'ru-RU'
-                  )}{' '}
-                  UAH
-                </span>
-              </div>
-
-              <button
-                className={styles.deleteBtn}
-                onClick={() => dispatch(selectOrder(order.id))}
-              >
-                🗑
-              </button>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-      <OrderDeleteModal />
-    </div>
-  )
+  return <OrdersPageClient initialOrders={data.orders} />
 }

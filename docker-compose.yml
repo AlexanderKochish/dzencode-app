@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   db:
     image: postgres:15-alpine
@@ -20,6 +18,9 @@ services:
   redis:
     image: redis:7-alpine
     container_name: dzencode_redis
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - REDIS_HOST=${REDIS_HOST}
     restart: always
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -30,6 +31,11 @@ services:
   web:
     build: .
     container_name: dzencode_web
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev --filter=@dzencode/web
     restart: always
     environment:
       - SERVICE_TYPE=web
@@ -38,6 +44,7 @@ services:
       - INTERNAL_API_URL=http://api:3001/graphql
       - NEXT_PUBLIC_API_URL=http://localhost:3001/graphql
       - NEXT_PUBLIC_SOCKET_URL=http://localhost:3001
+      - WATCHPACK_POLLING=true
     ports:
       - "${NEXT_PORT:-3000}:3000"
     depends_on:
@@ -47,19 +54,25 @@ services:
   api:
     build: .
     container_name: dzencode_api
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/packages/db/node_modules
+
     restart: always
     environment:
       - SERVICE_TYPE=server
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=${NODE_ENV}
+      - CHOKIDAR_USEPOLLING=true
     ports:
       - "${NEST_PORT:-3001}:3001"
       - "5555:5555"
     command: >
       sh -c "npx prisma migrate dev --name init && 
              (cd packages/db && npx prisma db seed) && 
-             npm run dev"
+             npm run dev --filter=@dzencode/server"
     depends_on:
       db:
         condition: service_healthy

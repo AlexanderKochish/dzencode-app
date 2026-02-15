@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from '@/app/store'
-import { setOrders, selectOrder } from '@/entities/order/model/order-slice'
+import { useAppDispatch } from '@/app/store'
+import { selectOrder } from '@/entities/order/model/order-slice'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './orders.module.scss'
 import {
@@ -12,29 +11,31 @@ import {
 import { Order } from '@/entities/order/model/types'
 import { calculateTotal } from '@/entities/order/lib/calculate-order-total'
 import { OrderDeleteModal } from '@/widgets/order-delete-modal/ui/order-delete-modal'
+import { Pagination } from '@/shared/ui/pagination/pagination'
+
+interface Props {
+  initialOrders: Order[]
+  totalCount: number
+  pageSize: number
+}
 
 export default function OrdersPageClient({
   initialOrders,
-}: {
-  initialOrders: Order[]
-}) {
+  totalCount,
+  pageSize,
+}: Props) {
   const dispatch = useAppDispatch()
-  const { list: orders } = useAppSelector((state) => state.order)
-
-  useEffect(() => {
-    dispatch(setOrders(initialOrders))
-  }, [initialOrders, dispatch])
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <button className={styles.plusBtn}>+</button>
-        <h1>Приходы / {orders.length}</h1>
+        <h1>Приходы / {initialOrders.length}</h1>
       </div>
 
       <div className={styles.ordersList}>
         <AnimatePresence>
-          {orders.map((order) => (
+          {initialOrders.map((order) => (
             <motion.div
               key={order.id}
               className={styles.orderItem}
@@ -87,6 +88,7 @@ export default function OrdersPageClient({
           ))}
         </AnimatePresence>
       </div>
+      <Pagination totalCount={totalCount} pageSize={pageSize} />
       <OrderDeleteModal />
     </div>
   )

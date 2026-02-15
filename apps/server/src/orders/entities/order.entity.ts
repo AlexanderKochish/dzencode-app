@@ -30,3 +30,12 @@ export class Order {
   @Field(() => [OrderTotal], { description: 'Сумма прихода в разных валютах' })
   total!: OrderTotal[];
 }
+
+@ObjectType()
+export class OrdersResponse {
+  @Field(() => [Order])
+  items!: Order[];
+
+  @Field(() => Int)
+  totalCount!: number;
+}

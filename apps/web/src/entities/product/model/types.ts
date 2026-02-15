@@ -16,11 +16,16 @@ export interface Product {
 
 export interface ProductState {
   products: Product[]
+  totalCount: number
   isLoading: boolean
   error: string | null
   selectedProductId: number | null
 }
 
 export interface GetProductsData {
-  products: Product[]
+  products: {
+    items: Product[]
+    totalCount: number
+  }
+  productTypes: string[]
 }

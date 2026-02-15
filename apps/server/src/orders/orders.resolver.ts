@@ -1,27 +1,24 @@
 import {
   Resolver,
   Query,
-  Mutation,
   Args,
   Int,
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
 import { OrdersService } from './orders.service';
-import { Order, OrderTotal } from './entities/order.entity';
+import { Order, OrdersResponse, OrderTotal } from './entities/order.entity';
 
 @Resolver(() => Order)
 export class OrdersResolver {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Query(() => [Order], { name: 'orders' })
-  findAll() {
-    return this.ordersService.findAll();
-  }
-
-  @Mutation(() => Order)
-  async removeOrder(@Args('id', { type: () => Int }) id: number) {
-    return this.ordersService.remove(id);
+  @Query(() => OrdersResponse, { name: 'orders' })
+  async findAll(
+    @Args('limit', { type: () => Int, defaultValue: 20 }) limit: number,
+    @Args('offset', { type: () => Int, defaultValue: 0 }) offset: number,
+  ) {
+    return await this.ordersService.findAll(limit, offset);
   }
 
   @ResolveField(() => [OrderTotal])

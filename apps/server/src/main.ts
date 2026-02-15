@@ -15,15 +15,12 @@ class RedisIoAdapter extends IoAdapter {
   async connectToRedis(): Promise<void> {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
-    console.log(`📡 Connecting to Redis at: ${redisUrl}`);
-
     const pubClient = createClient({ url: redisUrl });
     const subClient = pubClient.duplicate();
 
     try {
       await Promise.all([pubClient.connect(), subClient.connect()]);
       this.adapterConstructor = createAdapter(pubClient, subClient);
-      console.log('Redis Adapter connected successfully');
     } catch (error) {
       console.error('Redis Adapter connection failed:', error);
       throw error;
@@ -51,8 +48,6 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3001;
   await app.listen(port, '0.0.0.0');
-
-  console.log(`API is running on: http://localhost:${port}`);
 }
 
 bootstrap();

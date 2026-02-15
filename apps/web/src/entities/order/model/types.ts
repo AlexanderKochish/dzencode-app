@@ -30,8 +30,12 @@ export interface OrderSchema {
   isLoading: boolean
   error: string | null
   selectedOrderId: number | null
+  totalCount: number
 }
 
 export interface GetOrdersData {
-  orders: Order[]
+  orders: {
+    items: Order[]
+    totalCount: number
+  }
 }

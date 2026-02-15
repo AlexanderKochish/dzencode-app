@@ -1,0 +1,65 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Guarantee {
+  end: String!
+  start: String!
+}
+
+type Mutation {
+  removeProduct(id: Int!): Product!
+}
+
+type Order {
+  date: String!
+  description: String
+  id: Int!
+  products: [Product!]!
+  title: String!
+
+  """Сумма прихода в разных валютах"""
+  total: [OrderTotal!]!
+}
+
+type OrderTotal {
+  symbol: String!
+  value: Float!
+}
+
+type OrdersResponse {
+  items: [Order!]!
+  totalCount: Int!
+}
+
+type Price {
+  isDefault: Int!
+  symbol: String!
+  value: Float!
+}
+
+type Product {
+  date: String!
+  guarantee: Guarantee!
+  id: Int!
+  isNew: Int!
+  order: Order!
+  orderId: Int!
+  photo: String!
+  price: [Price!]!
+  serialNumber: Int!
+  specification: String!
+  title: String!
+  type: String!
+}
+
+type ProductsResponse {
+  items: [Product!]!
+  totalCount: Int!
+}
+
+type Query {
+  orders(limit: Int! = 20, offset: Int! = 0): OrdersResponse!
+  productTypes: [String!]!
+  products(limit: Int! = 20, offset: Int! = 0, type: String): ProductsResponse!
+}

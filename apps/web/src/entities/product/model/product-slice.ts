@@ -3,21 +3,27 @@ import { Product, ProductState } from './types'
 
 const initialState: ProductState = {
   products: [],
-  isLoading: false,
-  error: null,
+  totalCount: 0,
   selectedProductId: null,
+  error: null,
+  isLoading: false,
 }
-
 export const productSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    setProducts: (state, action: PayloadAction<Product[]>) => {
-      state.products = action.payload
-      state.isLoading = false
+    setProducts: (
+      state,
+      action: PayloadAction<{ items: Product[]; totalCount: number }>
+    ) => {
+      state.products = action.payload.items
+      state.totalCount = action.payload.totalCount
     },
     deleteProduct: (state, action: PayloadAction<number>) => {
-      state.products = state.products.filter((p) => p.id !== action.payload)
+      state.products = state.products.filter(
+        (p) => Number(p.id) !== Number(action.payload)
+      )
+      state.totalCount -= 1
     },
     selectProduct: (state, action: PayloadAction<number | null>) => {
       state.selectedProductId = action.payload

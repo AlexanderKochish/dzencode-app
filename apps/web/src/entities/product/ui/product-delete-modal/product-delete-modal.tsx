@@ -2,9 +2,8 @@
 
 import { useAppDispatch, useAppSelector } from '@/app/store'
 import { ActionModalLayout } from '@/shared/ui/action-modal-layout/action-modal-layout'
-import { selectProduct, deleteProduct } from '../../model/product-slice'
-import { REMOVE_PRODUCT } from '../../api/product.queries'
-import { useMutation } from '@apollo/client/react'
+import { selectProduct } from '../../model/product-slice'
+import { deleteProductAction } from '../../api/actions'
 
 export const ProductDeleteModal = () => {
   const dispatch = useAppDispatch()
@@ -12,8 +11,6 @@ export const ProductDeleteModal = () => {
   const { selectedProductId, products } = useAppSelector(
     (state) => state.products
   )
-
-  const [removeProduct] = useMutation(REMOVE_PRODUCT)
 
   const product = products.find((p) => p.id === selectedProductId)
   const isOpen = selectedProductId !== null
@@ -26,11 +23,7 @@ export const ProductDeleteModal = () => {
     if (!selectedProductId) return
 
     try {
-      await removeProduct({
-        variables: { id: selectedProductId },
-      })
-
-      dispatch(deleteProduct(selectedProductId))
+      await deleteProductAction(selectedProductId)
 
       handleClose()
     } catch (error) {

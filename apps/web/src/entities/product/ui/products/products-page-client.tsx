@@ -1,74 +1,52 @@
 'use client'
-import React, { useEffect, useMemo, useState } from 'react'
 import styles from './products.module.scss'
-import { useAppDispatch, useAppSelector } from '@/app/store'
+import { useAppDispatch } from '@/app/store'
 import Image from 'next/image'
 import { formatDateShort } from '@/shared/lib/date/format-date'
-import {
-  deleteProduct,
-  selectProduct,
-  setProducts,
-} from '../../model/product-slice'
+import { selectProduct } from '../../model/product-slice'
 import { Product } from '../../model/types'
 import { ProductDeleteModal } from '../product-delete-modal/product-delete-modal'
-import { useSocket } from '@/shared/hooks/use-socket'
+import { Pagination } from '@/shared/ui/pagination/pagination'
+import { useUpdateSearchParams } from '@/shared/hooks/use-update-search-params'
+import { useProductSocket } from '../../hooks/use-product-socket'
+
+interface Props {
+  initialProducts: Product[]
+  totalCount: number
+  pageSize: number
+  allTypes: string[]
+}
 
 const ProductsPageClient = ({
   initialProducts,
-}: {
-  initialProducts: Product[]
-}) => {
+  pageSize,
+  totalCount,
+  allTypes,
+}: Props) => {
+  useProductSocket()
   const dispatch = useAppDispatch()
-  const { products, isLoading } = useAppSelector((state) => state.products)
-  const { socket } = useSocket()
+  const { updateQuery, searchParams } = useUpdateSearchParams()
 
-  useEffect(() => {
-    if (!socket) return
+  const currentType = searchParams.get('type') || ''
 
-    const handleDelete = ({ id }: { id: number }) => {
-      dispatch(deleteProduct(id))
-    }
-
-    socket.on('productDeleted', handleDelete)
-
-    return () => {
-      socket.off('productDeleted')
-    }
-  }, [socket, dispatch])
-
-  const [filterType, setFilterType] = useState('')
-  const [filterSpec, setFilterSpec] = useState('')
-
-  const productTypes = useMemo(() => {
-    return Array.from(new Set(products.map((p) => p.type))).filter(Boolean)
-  }, [products])
-
-  const filteredProducts = products.filter((product) => {
-    if (filterType && product.type !== filterType) return false
-    if (filterSpec && product.specification !== filterSpec) return false
-    return true
-  })
-
-  useEffect(() => {
-    dispatch(setProducts(initialProducts))
-  }, [dispatch, initialProducts])
-
-  if (isLoading) return <div>Загрузка...</div>
+  const handleTypeChange = (newType: string) => {
+    updateQuery({ type: newType })
+  }
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
-        <h1>Продукты / {filteredProducts.length}</h1>
+        <h1>Продукты / {totalCount}</h1>
 
         <div className={styles.filters}>
           <label>
             Тип:
             <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
+              value={currentType}
+              onChange={(e) => handleTypeChange(e.target.value)}
             >
               <option value="">Все</option>
-              {productTypes.map((type) => (
+              {allTypes.map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>
@@ -76,22 +54,22 @@ const ProductsPageClient = ({
             </select>
           </label>
 
-          <label>
+          {/* <label>
             Спецификация:
             <select
-              value={filterSpec}
-              onChange={(e) => setFilterSpec(e.target.value)}
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
             >
               <option value="">Все</option>
               <option value="Specification 1">Specification 1</option>
               <option value="Specification 2">Specification 2</option>
             </select>
-          </label>
+          </label> */}
         </div>
       </div>
       <div className={styles.tableWrapper}>
         <div className={styles.list}>
-          {filteredProducts.map((product) => (
+          {initialProducts.map((product) => (
             <div key={product.id} className={styles.row}>
               <div className={styles.status}>
                 <div
@@ -152,6 +130,8 @@ const ProductsPageClient = ({
           ))}
         </div>
       </div>
+
+      <Pagination totalCount={totalCount} pageSize={pageSize} />
       <ProductDeleteModal />
     </div>
   )

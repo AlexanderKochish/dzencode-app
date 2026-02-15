@@ -60,3 +60,12 @@ export class Product {
   @Field()
   date!: string;
 }
+
+@ObjectType()
+export class ProductsResponse {
+  @Field(() => [Product])
+  items!: Product[];
+
+  @Field(() => Int)
+  totalCount!: number;
+}

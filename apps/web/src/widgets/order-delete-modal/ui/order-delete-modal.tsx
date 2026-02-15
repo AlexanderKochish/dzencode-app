@@ -1,9 +1,10 @@
 'use client'
 
-import { deleteOrder, selectOrder } from '@/entities/order/model/order-slice'
+import { selectOrder } from '@/entities/order/model/order-slice'
 
 import { ActionModalLayout } from '@/shared/ui/action-modal-layout/action-modal-layout'
 import { useAppDispatch, useAppSelector } from '@/app/store'
+import { deleteOrderAction } from '@/entities/order/api/actions'
 
 export const OrderDeleteModal = () => {
   const dispatch = useAppDispatch()
@@ -20,7 +21,7 @@ export const OrderDeleteModal = () => {
 
   const handleDelete = () => {
     if (selectedOrderId) {
-      dispatch(deleteOrder(selectedOrderId))
+      deleteOrderAction(selectedOrderId)
       handleClose()
     }
   }

@@ -1,24 +1,27 @@
 import { gql } from '@apollo/client'
 
 export const GET_ORDERS = gql`
-  query GetOrders {
-    orders {
-      id
-      title
-      date
-      description
-      total {
-        value
-        symbol
-      }
-      products {
+  query GetOrders($limit: Int, $offset: Int) {
+    orders(limit: $limit, offset: $offset) {
+      items {
         id
         title
-        price {
+        date
+        description
+        total {
           value
           symbol
         }
+        products {
+          id
+          title
+          price {
+            value
+            symbol
+          }
+        }
       }
+      totalCount
     }
   }
 `

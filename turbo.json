@@ -7,28 +7,31 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "dist/**"]
     },
-   
-    "lint": {},
+    "start": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["DATABASE_URL", "REDIS_URL"]
+    },
+    "generate": {
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
     "push": {
-        "cache": false,
-        "env": ["DATABASE_URL"] 
-      },
-      "seed": {
-        "cache": false,
-        "env": ["DATABASE_URL"]
-      },
-      "generate": {
-        "cache": false,
-        "env": ["DATABASE_URL"]
-      },
-      "dev": {
-        "cache": false,
-        "persistent": true,
-        "env": ["DATABASE_URL", "REDIS_URL"]
-      },
-      "migrate:deploy": {
-        "cache": false,
-        "env": ["DATABASE_URL"]
-      }
+      "cache": false,
+      "env": ["DATABASE_URL"] 
+    },
+    "seed": {
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
+    "migrate:deploy": {
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
+    "lint": {}
   }
 }

@@ -26,13 +26,16 @@ WORKDIR /app
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-
 COPY --from=builder --chown=nextjs:nodejs /app .
+
+
+COPY --from=pruner --chown=nextjs:nodejs /app/docker-entrypoint.sh ./docker-entrypoint.sh
+
 
 RUN sed -i 's/\r$//' ./docker-entrypoint.sh && \
     chmod +x ./docker-entrypoint.sh
 
-USER root
+USER nextjs
 
 EXPOSE 3000 3001
 

@@ -1,7 +1,6 @@
 import { renderHook, act } from '@testing-library/react'
 import { useUpdateSearchParams } from '@/shared/hooks/use-update-search-params'
 
-// Мокаем next/navigation
 const mockPush = jest.fn()
 const mockSearchParamsGet = jest.fn()
 

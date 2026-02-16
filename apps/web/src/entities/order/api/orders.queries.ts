@@ -15,6 +15,9 @@ export const GET_ORDERS = gql`
         products {
           id
           title
+          photo
+          isNew
+          serialNumber
           price {
             value
             symbol
@@ -30,6 +33,7 @@ export const REMOVE_ORDER = gql`
   mutation RemoveOrder($id: Int!) {
     removeOrder(id: $id) {
       id
+      title
     }
   }
 `

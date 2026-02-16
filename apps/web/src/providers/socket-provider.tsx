@@ -1,54 +1,29 @@
 'use client'
 
-import React, {
-  createContext,
-  useEffect,
-  useState,
-  useMemo,
-  startTransition,
-} from 'react'
-import { io, Socket } from 'socket.io-client'
+import React, { useEffect, useState, useMemo, startTransition } from 'react'
+import { io } from 'socket.io-client'
+import { SocketContext, TypedSocket } from './socket-context'
 
-export interface ServerToClientEvents {
-  updateActiveTabs: (count: number) => void
-  productDeleted: ({ id }: { id: number }) => void
-}
-
-export interface ClientToServerEvents {
-  sendMessage: (msg: string) => void
-}
-
-type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>
-
-export const SocketContext = createContext<{
-  socket: TypedSocket | null
-  isConnected: boolean
-} | null>(null)
+export { SocketContext } from './socket-context'
+export type { SocketContextValue, TypedSocket } from './socket-context'
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<TypedSocket | null>(null)
   const [isConnected, setIsConnected] = useState(false)
 
   useEffect(() => {
-    const socketInstance: TypedSocket = io(
-      process.env.NEXT_PUBLIC_SOCKET_URL!,
-      {
-        transports: ['websocket'],
-        withCredentials: true,
-        reconnectionAttempts: 5,
-      }
-    )
+    const url = process.env.NEXT_PUBLIC_SOCKET_URL ?? 'http://localhost:3001'
 
-    socketInstance.on('connect', () => {
-      setIsConnected(true)
+    const socketInstance: TypedSocket = io(url, {
+      transports: ['websocket'],
+      withCredentials: true,
+      reconnectionAttempts: 5,
     })
 
-    socketInstance.on('disconnect', () => {
-      setIsConnected(false)
-    })
-
+    socketInstance.on('connect', () => setIsConnected(true))
+    socketInstance.on('disconnect', () => setIsConnected(false))
     socketInstance.on('connect_error', (err) => {
-      console.error('Socket connection error:', err.message)
+      console.error(err.message)
     })
 
     startTransition(() => setSocket(socketInstance))
@@ -61,6 +36,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const value = useMemo(() => ({ socket, isConnected }), [socket, isConnected])
 
   return (
-    <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={value}>
+      {children}
+    </SocketContext.Provider>
   )
 }

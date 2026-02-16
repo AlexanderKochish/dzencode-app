@@ -1,37 +1,53 @@
 'use client'
 
-import { formatDate } from '@/shared/lib/date/format-date'
 import React, { useState, useEffect } from 'react'
 import styles from './top-menu.module.scss'
 
+function formatTopDate(date: Date): string {
+  const day = String(date.getDate()).padStart(2, '0')
+  const year = date.getFullYear()
+  let month = date.toLocaleString('ru-RU', { month: 'short' }).replace('.', '')
+  month = month.charAt(0).toUpperCase() + month.slice(1)
+  return `${day} ${month}, ${year}`
+}
+
+function getDayLabel(date: Date): string {
+  const today = new Date()
+  const isToday =
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+
+  if (isToday) return 'Today'
+
+  const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+  return days[date.getDay()]
+}
+
+function formatTime(date: Date): string {
+  return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+}
+
 export const CurrentTime = () => {
-  const [dateTime, setDateTime] = useState<Date | null>(null)
+  const [now, setNow] = useState<Date | null>(null)
 
   useEffect(() => {
-    const frameId = requestAnimationFrame(() => setDateTime(new Date()))
-    const interval = setInterval(() => {
-      setDateTime(new Date())
-    }, 1000)
-    return () => {
-      cancelAnimationFrame(frameId)
-      clearInterval(interval)
-    }
+    setNow(new Date())
+    const interval = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(interval)
   }, [])
 
-  if (!dateTime) return null
-
-  const formattedTime = formatDate(dateTime)
+  if (!now) return null
 
   return (
-    <>
-      <span>{formattedTime}</span>
-      <span className={styles.time}>
-        ⏱{' '}
-        {dateTime.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        })}
-      </span>
-    </>
+    <div className={styles.dateTimeBlock}>
+      <span className={styles.dayLabel}>{getDayLabel(now)}</span>
+      <div className={styles.dateRow}>
+        <span className={styles.dateText}>{formatTopDate(now)}</span>
+        <span className={styles.timeSep} />
+        <span className={styles.clockIcon}>⏱</span>
+        <span className={styles.timeText}>{formatTime(now)}</span>
+      </div>
+    </div>
   )
 }

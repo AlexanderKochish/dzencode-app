@@ -2,15 +2,20 @@ import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client'
 import { cache } from 'react'
 import 'server-only'
 
+function getServerApiUrl(): string {
+  const url =
+    process.env.INTERNAL_API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    'http://localhost:3001'
+
+  return url.endsWith('/graphql') ? url : `${url}/graphql`
+}
+
 export const getClient = cache(() => {
-  const baseUri = 'http://dzencode-app.railway.internal:3001'
-
-  const finalUri = baseUri.endsWith('/graphql') ? baseUri : `${baseUri}/graphql`
-
   return new ApolloClient({
     cache: new InMemoryCache(),
     link: new HttpLink({
-      uri: finalUri,
+      uri: getServerApiUrl(),
       fetchOptions: { cache: 'no-store' },
     }),
   })

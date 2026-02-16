@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react'
 import { useActiveTabs } from '@/shared/hooks/use-active-tabs'
-import { SocketContext } from '@/providers/socket-provider'
+import { SocketContext } from '@/providers/socket-context'
 import React from 'react'
 import { EventEmitter } from 'events'
 

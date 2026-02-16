@@ -7,10 +7,9 @@ export const ActiveTabsCounter = () => {
   const count = useActiveTabs()
 
   return (
-    <div className={styles.counter}>
-      <span>
-        Активных вкладок сейчас: <strong>{count}</strong>
-      </span>
+    <div className={styles.counter} title="Активных вкладок">
+      <span className={styles.dot} />
+      <span className={styles.count}>{count}</span>
     </div>
   )
 }

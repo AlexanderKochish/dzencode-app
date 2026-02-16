@@ -7,10 +7,7 @@ import {
 } from '@apollo/client-integration-nextjs'
 
 function makeClient() {
-  const baseUri =
-    typeof window === 'undefined'
-      ? process.env.INTERNAL_API_URL || 'http://api:3001'
-      : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+  const baseUri = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
   const httpLink = new HttpLink({
     uri: `${baseUri}/graphql`,

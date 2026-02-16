@@ -7,9 +7,15 @@ import {
 import { Server } from 'socket.io';
 import { RedisService } from '../redis/redis.service';
 
+const isDev = process.env.NODE_ENV !== 'production';
+
+const wsOrigin = isDev
+  ? /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/
+  : (process.env.BASE_URL ?? 'http://localhost:3000').split(',').map((u) => u.trim());
+
 @WebSocketGateway({
   cors: {
-    origin: process.env.BASE_URL ?? 'http://localhost:3000',
+    origin: wsOrigin,
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -24,18 +30,14 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleConnection() {
     const sockets = await this.server.fetchSockets();
     const count = sockets.length;
-
     await this.redisService.set(this.TAB_KEY, count);
-
     this.broadcastCount(count);
   }
 
   async handleDisconnect() {
     const sockets = await this.server.fetchSockets();
     const count = sockets.length;
-
     await this.redisService.set(this.TAB_KEY, count);
-
     this.broadcastCount(count);
   }
 
@@ -43,7 +45,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.emit('updateActiveTabs', count);
   }
 
-  sendToAll(event: string, data: any) {
+  sendToAll(event: string, data: unknown) {
     this.server.emit(event, data);
   }
 }

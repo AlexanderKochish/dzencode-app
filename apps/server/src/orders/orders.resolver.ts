@@ -3,6 +3,7 @@ import {
   Query,
   Args,
   Int,
+  Mutation,
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
@@ -21,10 +22,14 @@ export class OrdersResolver {
     return await this.ordersService.findAll(limit, offset);
   }
 
+  @Mutation(() => Order)
+  async removeOrder(@Args('id', { type: () => Int }) id: number) {
+    return this.ordersService.remove(id);
+  }
+
   @ResolveField(() => [OrderTotal])
   total(@Parent() order: Order): OrderTotal[] {
     const products = order.products || [];
-
     const totals: Record<string, number> = {};
 
     products.forEach((product) => {

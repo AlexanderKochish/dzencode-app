@@ -8,6 +8,7 @@ type Guarantee {
 }
 
 type Mutation {
+  removeOrder(id: Int!): Order!
   removeProduct(id: Int!): Product!
 }
 
@@ -60,6 +61,7 @@ type ProductsResponse {
 
 type Query {
   orders(limit: Int! = 20, offset: Int! = 0): OrdersResponse!
+  productSpecs: [String!]!
   productTypes: [String!]!
-  products(limit: Int! = 20, offset: Int! = 0, type: String): ProductsResponse!
+  products(limit: Int! = 20, offset: Int! = 0, spec: String, type: String): ProductsResponse!
 }

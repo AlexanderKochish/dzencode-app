@@ -11,8 +11,9 @@ export class ProductsResolver {
     @Args('limit', { type: () => Int, defaultValue: 20 }) limit: number,
     @Args('offset', { type: () => Int, defaultValue: 0 }) offset: number,
     @Args('type', { nullable: true }) type?: string,
+    @Args('spec', { nullable: true }) spec?: string,
   ) {
-    return await this.productsService.findAll(limit, offset, type);
+    return await this.productsService.findAll(limit, offset, type, spec);
   }
 
   @Mutation(() => Product)
@@ -23,5 +24,10 @@ export class ProductsResolver {
   @Query(() => [String])
   async productTypes() {
     return this.productsService.getUniqueTypes();
+  }
+
+  @Query(() => [String])
+  async productSpecs() {
+    return this.productsService.getUniqueSpecs();
   }
 }

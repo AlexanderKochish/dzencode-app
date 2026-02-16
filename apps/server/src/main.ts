@@ -14,7 +14,6 @@ class RedisIoAdapter extends IoAdapter {
 
   async connectToRedis(): Promise<void> {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-
     const pubClient = createClient({ url: redisUrl });
     const subClient = pubClient.duplicate();
 
@@ -34,20 +33,35 @@ class RedisIoAdapter extends IoAdapter {
   }
 }
 
+function getCorsOrigins(): string | string[] | RegExp {
+  const isDev = process.env.NODE_ENV !== 'production';
+
+  if (isDev) {
+    return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+  }
+
+  const baseUrl = process.env.BASE_URL ?? 'http://localhost:3000';
+  return baseUrl.split(',').map((u) => u.trim());
+}
+
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
+
+  const corsOrigins = getCorsOrigins();
+
+  app.enableCors({
+    origin: corsOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  });
 
   const redisIoAdapter = new RedisIoAdapter(app);
   await redisIoAdapter.connectToRedis();
   app.useWebSocketAdapter(redisIoAdapter);
 
-  app.enableCors({
-    origin: process.env.BASE_URL ?? 'http://localhost:3000',
-    credentials: true,
-  });
-
   const port = process.env.PORT ?? 3001;
-  await app.listen(port, '::');
+  const host = process.env.NODE_ENV === 'production' ? '::' : '0.0.0.0';
+  await app.listen(port, host);
 }
 
 bootstrap();

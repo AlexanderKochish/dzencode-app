@@ -3,6 +3,14 @@
 import { ErrorPlaceholder } from '@/shared/ui/error-placeholder/error-placeholder'
 import { useEffect } from 'react'
 
+function getReadableMessage(error: Error): string {
+  const msg = error.message.toLowerCase()
+  if (msg.includes('econnreset') || msg.includes('econnrefused') || msg.includes('fetch failed')) {
+    return 'Сервер API недоступен. Убедитесь что NestJS запущен на порту 3001.'
+  }
+  return error.message
+}
+
 export default function ProductsError({
   error,
   reset,
@@ -11,12 +19,13 @@ export default function ProductsError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('Captured Order Error:', error)
+    console.error(error)
   }, [error])
+
   return (
     <ErrorPlaceholder
       title="Ошибка при загрузке товаров"
-      message={error.message}
+      message={getReadableMessage(error)}
       onReset={reset}
     />
   )

@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const GET_PRODUCTS = gql`
-  query GetProducts($limit: Int, $offset: Int, $type: String) {
-    products(limit: $limit, offset: $offset, type: $type) {
+  query GetProducts($limit: Int, $offset: Int, $type: String, $spec: String) {
+    products(limit: $limit, offset: $offset, type: $type, spec: $spec) {
       items {
         id
         serialNumber
@@ -29,8 +29,10 @@ export const GET_PRODUCTS = gql`
       totalCount
     }
     productTypes
+    productSpecs
   }
 `
+
 export const REMOVE_PRODUCT = gql`
   mutation RemoveProduct($id: Int!) {
     removeProduct(id: $id) {

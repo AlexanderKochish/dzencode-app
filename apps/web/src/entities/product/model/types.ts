@@ -12,6 +12,11 @@ export interface Product {
   price: Price[]
   orderId: number
   date: string
+  // Связанный приход — приходит из GraphQL include
+  order?: {
+    id: number
+    title: string
+  }
 }
 
 export interface ProductState {
@@ -28,4 +33,5 @@ export interface GetProductsData {
     totalCount: number
   }
   productTypes: string[]
+  productSpecs: string[]
 }

@@ -3,7 +3,7 @@ import { cache } from 'react'
 import 'server-only'
 
 export const getClient = cache(() => {
-  const baseUri = process.env.INTERNAL_API_URL || 'http://api:3001'
+  const baseUri = 'http://dzencode-app.railway.internal:3001'
 
   const finalUri = baseUri.endsWith('/graphql') ? baseUri : `${baseUri}/graphql`
 

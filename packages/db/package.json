@@ -9,6 +9,7 @@
     "dev": "tsup index.ts --format cjs,esm --watch --dts",
     "push": "prisma db push",
     "generate": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy",
     "seed": "prisma db seed"
   },
   "dependencies": {

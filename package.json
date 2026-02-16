@@ -29,5 +29,8 @@
   "homepage": "https://github.com/AlexanderKochish/dzencode-app#readme",
   "devDependencies": {
     "turbo": "2.8.6"
+  },
+  "dependencies": {
+    "server-only": "^0.0.1"
   }
 }

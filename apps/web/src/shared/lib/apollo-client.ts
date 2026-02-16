@@ -1,6 +1,6 @@
-'use server'
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client'
 import { cache } from 'react'
+import 'server-only'
 
 export const getClient = cache(() => {
   const baseUri = process.env.INTERNAL_API_URL || 'http://api:3001'

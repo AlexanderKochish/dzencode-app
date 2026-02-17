@@ -15,9 +15,6 @@ export const useActiveTabs = () => {
     }
 
     socket.on('updateActiveTabs', handleUpdate)
-
-    // Запрашиваем актуальный счётчик сразу после подписки —
-    // на случай если broadcast от сервера пришёл раньше чем смонтировался хук
     socket.emit('getActiveTabs', null)
 
     return () => {

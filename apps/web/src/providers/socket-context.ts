@@ -2,15 +2,9 @@
 
 import { createContext } from 'react'
 import { Socket } from 'socket.io-client'
+import type { ServerToClientEvents, ClientToServerEvents } from '@/shared/types/socket-types'
 
-export interface ServerToClientEvents {
-  updateActiveTabs: (count: number) => void
-  productDeleted: ({ id }: { id: number }) => void
-}
-
-export interface ClientToServerEvents {
-  sendMessage: (msg: string) => void
-}
+export type { ServerToClientEvents, ClientToServerEvents } from '@/shared/types/socket-types'
 
 export type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>
 

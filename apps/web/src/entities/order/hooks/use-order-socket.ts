@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useSocket } from '@/shared/hooks/use-socket'
 import { useRouter } from 'next/navigation'
 
-export const useProductSocket = () => {
+export const useOrderSocket = () => {
   const router = useRouter()
   const { socket } = useSocket()
 
@@ -13,10 +13,10 @@ export const useProductSocket = () => {
 
     const handleDelete = () => router.refresh()
 
-    socket.on('productDeleted', handleDelete)
+    socket.on('orderDeleted', handleDelete)
 
     return () => {
-      socket.off('productDeleted', handleDelete)
+      socket.off('orderDeleted', handleDelete)
     }
   }, [socket, router])
 }

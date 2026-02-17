@@ -75,7 +75,6 @@ services:
       - WATCHPACK_POLLING=true
     ports:
       - "${NEXT_PORT:-3000}:3000"
-    # Web стартует сразу — не ждет api healthy, только что он запущен
     depends_on:
       - api
 

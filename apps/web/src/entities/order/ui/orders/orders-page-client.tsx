@@ -11,6 +11,7 @@ import { calculateTotal } from '@/entities/order/lib/calculate-order-total'
 import { OrderDeleteModal } from '@/widgets/order-delete-modal/ui/order-delete-modal'
 import { Pagination } from '@/shared/ui/pagination/pagination'
 import { useState, useEffect } from 'react'
+import { useOrderSocket } from '@/entities/order/hooks/use-order-socket'
 import { useTranslations } from '@/shared/i18n/i18n-context'
 import { TruncatedText } from '@/shared/ui/truncated-text/truncated-text'
 
@@ -30,6 +31,8 @@ export default function OrdersPageClient({
   const [openOrderId, setOpenOrderId] = useState<number | null>(null)
 
   const openOrder = initialOrders.find((o) => o.id === openOrderId) ?? null
+
+  useOrderSocket()
 
   useEffect(() => {
     dispatch(setOrders({ items: initialOrders, totalCount }))

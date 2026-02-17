@@ -1,4 +1,5 @@
 'use client'
+
 import { HttpLink } from '@apollo/client'
 import {
   ApolloNextAppProvider,
@@ -7,16 +8,35 @@ import {
 } from '@apollo/client-integration-nextjs'
 
 function makeClient() {
-  const baseUri = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+  if (typeof window === 'undefined') {
+    const isProd = process.env.NODE_ENV === 'production'
+    const defaultServerUrl = isProd
+      ? 'http://dzencode-app.railway.internal:3001'
+      : 'http://localhost:3001'
 
-  const httpLink = new HttpLink({
-    uri: `${baseUri}/graphql`,
-    fetchOptions: { cache: 'no-store' },
-  })
+    const serverUri = process.env.INTERNAL_API_URL || defaultServerUrl
+
+    return new ApolloClient({
+      cache: new InMemoryCache(),
+      link: new HttpLink({
+        uri: serverUri.endsWith('/graphql')
+          ? serverUri
+          : `${serverUri}/graphql`,
+        fetchOptions: { cache: 'no-store' },
+      }),
+    })
+  }
+
+  const browserUri = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
   return new ApolloClient({
     cache: new InMemoryCache(),
-    link: httpLink,
+    link: new HttpLink({
+      uri: browserUri.endsWith('/graphql')
+        ? browserUri
+        : `${browserUri}/graphql`,
+      fetchOptions: { cache: 'no-store' },
+    }),
   })
 }
 

@@ -9,6 +9,13 @@ const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
 
+  // Prevent jsdom from adding 'browser' export condition.
+  // This forces MSW to resolve its Node.js entry point (which uses native Node APIs)
+  // instead of the browser entry point (which expects native browser globals).
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
+
   // Polyfills must run BEFORE any test imports (MSW v2 needs fetch globals)
   setupFiles: ['<rootDir>/jest.polyfills.ts'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],

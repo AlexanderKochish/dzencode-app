@@ -5,8 +5,10 @@ import redisConfig from '../config/redis.config';
 import { RedisService } from './redis.service';
 
 export interface RedisConfig {
-  host: string;
-  port: number;
+  url?: string;
+  host?: string;
+  port?: number;
+  password?: string;
 }
 
 export interface AppConfig {
@@ -18,12 +20,14 @@ export interface AppConfig {
   providers: [
     {
       provide: 'REDIS_CLIENT',
-      useFactory: async (configService: ConfigService<AppConfig>) => {
-        const host = configService.get('redis.host', { infer: true });
-        const port = configService.get('redis.port', { infer: true });
+      useFactory: async (configService: ConfigService) => {
+        const redisConf = configService.get<RedisConfig>('redis');
+        const url = redisConf?.url;
+        const host = redisConf?.host || 'localhost';
+        const port = redisConf?.port || 6379;
 
         const client = createClient({
-          url: `redis://${host}:${port}`,
+          url: url ?? `redis://${host}:${port}`,
         });
 
         await client.connect();

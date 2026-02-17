@@ -9,6 +9,8 @@ const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
 
+  // Polyfills must run BEFORE any test imports (MSW v2 needs fetch globals)
+  setupFiles: ['<rootDir>/jest.polyfills.ts'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
   moduleNameMapper: {

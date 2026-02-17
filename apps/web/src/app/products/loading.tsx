@@ -1,7 +1,7 @@
-import React from 'react'
+import { Loader } from '@/shared/ui/loader/loader'
 
 const Loading = () => {
-  return <div>Loading...</div>
+  return <Loader text="Loading..." />
 }
 
 export default Loading

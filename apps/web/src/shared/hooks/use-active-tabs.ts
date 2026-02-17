@@ -15,6 +15,7 @@ export const useActiveTabs = () => {
     }
 
     socket.on('updateActiveTabs', handleUpdate)
+    socket.emit('getActiveTabs')
 
     return () => {
       socket.off('updateActiveTabs', handleUpdate)

@@ -3,8 +3,9 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { RedisService } from '../redis/redis.service';
 import { getCorsOrigins } from '../shared/get-cors-origins';
 
@@ -22,22 +23,26 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(private readonly redisService: RedisService) {}
 
-  async handleConnection() {
+  async handleConnection(client: Socket) {
     const sockets = await this.server.fetchSockets();
     const count = sockets.length;
     await this.redisService.set(this.TAB_KEY, count);
-    this.broadcastCount(count);
+
+    client.broadcast.emit('updateActiveTabs', count);
+    client.emit('updateActiveTabs', count);
   }
 
   async handleDisconnect() {
     const sockets = await this.server.fetchSockets();
     const count = sockets.length;
     await this.redisService.set(this.TAB_KEY, count);
-    this.broadcastCount(count);
+    this.server.emit('updateActiveTabs', count);
   }
 
-  private broadcastCount(count: number) {
-    this.server.emit('updateActiveTabs', count);
+  @SubscribeMessage('getActiveTabs')
+  async handleGetActiveTabs(client: Socket) {
+    const sockets = await this.server.fetchSockets();
+    client.emit('updateActiveTabs', sockets.length);
   }
 
   sendToAll(event: string, data: unknown) {

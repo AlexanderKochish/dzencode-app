@@ -1,20 +1,26 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-// jest.polyfills.ts — Required for MSW v2 in jsdom environment
-// jsdom strips away Node.js fetch globals, but MSW v2 needs them
 
 import { TextDecoder, TextEncoder } from 'node:util'
-import { ReadableStream, TransformStream } from 'node:stream/web'
+import {
+  ReadableStream,
+  TransformStream,
+  WritableStream,
+} from 'node:stream/web'
 
-// BroadcastChannel polyfill for MSW WebSocket support
 class BroadcastChannelPolyfill {
   name: string
   onmessage: ((ev: MessageEvent) => void) | null = null
-  constructor(name: string) { this.name = name }
+  onmessageerror: ((ev: MessageEvent) => void) | null = null
+  constructor(name: string) {
+    this.name = name
+  }
   postMessage() {}
   close() {}
   addEventListener() {}
   removeEventListener() {}
-  dispatchEvent() { return true }
+  dispatchEvent() {
+    return true
+  }
 }
 
 Object.defineProperties(globalThis, {
@@ -22,6 +28,7 @@ Object.defineProperties(globalThis, {
   TextEncoder: { value: TextEncoder },
   ReadableStream: { value: ReadableStream },
   TransformStream: { value: TransformStream },
+  WritableStream: { value: WritableStream },
   BroadcastChannel: { value: BroadcastChannelPolyfill },
 })
 

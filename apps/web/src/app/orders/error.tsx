@@ -1,14 +1,17 @@
 'use client'
 
-import { ErrorPlaceholder } from '@/shared/ui/error-placeholder/error-placeholder'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-function getReadableMessage(error: Error): string {
+function isApiUnavailable(error: Error): boolean {
   const msg = error.message.toLowerCase()
-  if (msg.includes('econnreset') || msg.includes('econnrefused') || msg.includes('fetch failed')) {
-    return 'Сервер API недоступен. Убедитесь что NestJS запущен на порту 3001.'
-  }
-  return error.message
+  return (
+    msg.includes('econnreset') ||
+    msg.includes('econnrefused') ||
+    msg.includes('fetch failed') ||
+    msg.includes('network') ||
+    msg.includes('connect') ||
+    msg.includes('socket')
+  )
 }
 
 export default function OrdersError({
@@ -18,15 +21,32 @@ export default function OrdersError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const [retryCount, setRetryCount] = useState(0)
+  const apiError = isApiUnavailable(error)
+
   useEffect(() => {
-    console.error(error)
-  }, [error])
+    if (!apiError) return
+    const timer = setTimeout(() => {
+      setRetryCount((c) => c + 1)
+      reset()
+    }, 3000)
+    return () => clearTimeout(timer)
+  }, [apiError, reset, retryCount])
+
+  if (apiError) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', gap: 16 }}>
+        <div className="spinner-border text-secondary" role="status" />
+        <p style={{ color: '#888', margin: 0 }}>Подключение к серверу...</p>
+      </div>
+    )
+  }
 
   return (
-    <ErrorPlaceholder
-      title="Ошибка при загрузке приходов"
-      message={getReadableMessage(error)}
-      onReset={reset}
-    />
+    <div style={{ padding: 32 }}>
+      <h2>Ошибка загрузки</h2>
+      <p>{error.message}</p>
+      <button onClick={reset}>Повторить</button>
+    </div>
   )
 }

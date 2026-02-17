@@ -1,5 +1,4 @@
 {
-  "extends": "@dzencode/tsconfig/base.json",
   "compilerOptions": {
     "strict": true,
     "module": "NodeNext",
@@ -15,3 +14,5 @@
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts"]
 }
+
+//  "extends": "@dzencode/tsconfig/base.json",

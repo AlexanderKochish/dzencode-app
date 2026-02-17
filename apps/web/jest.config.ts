@@ -9,6 +9,14 @@ const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
 
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(msw|@mswjs|until-async|outvariant|strict-event-emitter)/)',
+  ],
+
+  setupFiles: ['<rootDir>/jest.polyfills.ts'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
   moduleNameMapper: {

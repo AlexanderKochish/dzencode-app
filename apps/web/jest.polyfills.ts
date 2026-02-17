@@ -3,7 +3,11 @@
 // jsdom strips away Node.js fetch globals, but MSW v2 needs them
 
 import { TextDecoder, TextEncoder } from 'node:util'
-import { ReadableStream, TransformStream } from 'node:stream/web'
+import {
+  ReadableStream,
+  TransformStream,
+  WritableStream,
+} from 'node:stream/web'
 
 // BroadcastChannel polyfill for MSW WebSocket support
 class BroadcastChannelPolyfill {
@@ -22,6 +26,7 @@ Object.defineProperties(globalThis, {
   TextEncoder: { value: TextEncoder },
   ReadableStream: { value: ReadableStream },
   TransformStream: { value: TransformStream },
+  WritableStream: { value: WritableStream },
   BroadcastChannel: { value: BroadcastChannelPolyfill },
 })
 

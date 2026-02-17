@@ -1,25 +1,11 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { createClient, RedisClientType } from 'redis';
+import { Inject, Injectable } from '@nestjs/common';
+import { RedisClientType } from 'redis';
 
 @Injectable()
-export class RedisService implements OnModuleInit, OnModuleDestroy {
-  private client: RedisClientType;
-
-  constructor() {
-    this.client = createClient({
-      url: process.env.REDIS_URL || 'redis://redis:6379',
-    });
-
-    this.client.on('error', (err) => console.error('Redis Client Error', err));
-  }
-
-  async onModuleInit() {
-    await this.client.connect();
-  }
-
-  async onModuleDestroy() {
-    await this.client.quit();
-  }
+export class RedisService {
+  constructor(
+    @Inject('REDIS_CLIENT') private readonly client: RedisClientType,
+  ) {}
 
   async incr(key: string): Promise<number> {
     return await this.client.incr(key);

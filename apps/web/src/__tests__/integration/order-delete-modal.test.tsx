@@ -4,11 +4,12 @@ import { renderWithStore } from './test-utils'
 import { OrderDeleteModal } from '@/widgets/order-delete-modal/ui/order-delete-modal'
 import { mockOrders } from './mocks/handlers'
 import { Order } from '@/entities/order/model/types'
+import Image from 'next/image'
 
 jest.mock('next/image', () => ({
   __esModule: true,
   default: ({ src, alt }: { src: string; alt: string }) => (
-    <img src={src} alt={alt} />
+    <Image src={src} alt={alt} />
   ),
 }))
 
@@ -18,11 +19,16 @@ jest.mock('@/entities/order/api/actions', () => ({
 
 jest.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }) => (
-      <div {...props}>{children}</div>
-    ),
+    div: ({
+      children,
+      ...props
+    }: React.HTMLAttributes<HTMLDivElement> & {
+      children: React.ReactNode
+    }) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
 }))
 
 const order = mockOrders[0] as unknown as Order

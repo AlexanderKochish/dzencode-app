@@ -18,13 +18,18 @@ export const useSocketRefresh = <T extends keyof ServerToClientEvents>(
       router.refresh()
     }
 
+    const flexibleSocket = socket as unknown as {
+      on: (event: string, listener: (...args: unknown[]) => void) => void
+      off: (event: string, listener: (...args: unknown[]) => void) => void
+    }
+
     eventNames.forEach((event) => {
-      socket.on(event as any, handleRefresh)
+      flexibleSocket.on(event as string, handleRefresh)
     })
 
     return () => {
       eventNames.forEach((event) => {
-        socket.off(event as any, handleRefresh)
+        flexibleSocket.off(event as string, handleRefresh)
       })
     }
   }, [socket, router, eventNames])

@@ -71,3 +71,17 @@ export const getClientAction = async <
 
   return { data: null, error: new Error('All retry attempts exhausted') }
 }
+
+import { cookies } from 'next/headers'
+import { Locale } from '@/shared/i18n/config'
+
+export async function setLocaleCookie(locale: Locale) {
+  const cookieStore = await cookies()
+
+  cookieStore.set('NEXT_LOCALE', locale, {
+    path: '/',
+    maxAge: 31536000,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  })
+}

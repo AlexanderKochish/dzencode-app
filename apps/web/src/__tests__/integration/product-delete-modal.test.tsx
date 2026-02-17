@@ -4,12 +4,13 @@ import { renderWithStore } from './test-utils'
 import { ProductDeleteModal } from '@/entities/product/ui/product-delete-modal/product-delete-modal'
 import { mockProducts } from './mocks/handlers'
 import { Product } from '@/entities/product/model/types'
+import Image from 'next/image'
 
 // Мокаем next/image
 jest.mock('next/image', () => ({
   __esModule: true,
   default: ({ src, alt }: { src: string; alt: string }) => (
-    <img src={src} alt={alt} />
+    <Image src={src} alt={alt} />
   ),
 }))
 

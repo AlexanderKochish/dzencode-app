@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { LOCALES, Locale } from '@/shared/i18n/config'
 import { useLocale } from '@/shared/i18n/i18n-context'
 import styles from './language-switcher.module.scss'
+import { setLocaleCookie } from '@/shared/api/actions'
 
 const LOCALE_NAMES: Record<Locale, string> = {
   ru: 'Русский',
@@ -15,14 +16,15 @@ export const LanguageSwitcher = () => {
   const pathname = usePathname()
   const currentLocale = useLocale()
 
-  const handleChange = (newLocale: Locale) => {
+  const handleChange = async (newLocale: Locale) => {
     if (newLocale === currentLocale) return
 
     const segments = pathname.split('/').filter(Boolean)
     segments[0] = newLocale
     const newPath = `/${segments.join('/')}`
 
-    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000`
+    await setLocaleCookie(newLocale)
+
     router.push(newPath)
     router.refresh()
   }

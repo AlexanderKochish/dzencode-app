@@ -28,13 +28,16 @@ const FALLBACK_TRANSLATIONS: TranslationMap = {
   common: {},
 }
 
-export async function fetchTranslations(locale: Locale): Promise<TranslationMap> {
+export async function fetchTranslations(
+  locale: Locale
+): Promise<TranslationMap> {
   try {
-    const { data, error } = await getClientAction<GetTranslationsData>(GET_TRANSLATIONS, {
-      variables: { locale },
-      cache: 'force-cache',
-      revalidate: 3600,
-    })
+    const { data, error } = await getClientAction<GetTranslationsData>(
+      GET_TRANSLATIONS,
+      {
+        variables: { locale },
+      }
+    )
 
     if (error) {
       console.error('[i18n] Failed to fetch translations:', error.message)
@@ -54,7 +57,9 @@ export async function fetchTranslations(locale: Locale): Promise<TranslationMap>
       map[ns]![t.key] = t.value
     }
 
-    console.log(`[i18n] Loaded ${data.translations.length} translations for "${locale}"`)
+    console.log(
+      `[i18n] Loaded ${data.translations.length} translations for "${locale}"`
+    )
     return map as TranslationMap
   } catch (err) {
     console.error('[i18n] Unexpected error fetching translations:', err)

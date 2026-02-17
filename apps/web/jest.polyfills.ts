@@ -5,11 +5,24 @@
 import { TextDecoder, TextEncoder } from 'node:util'
 import { ReadableStream, TransformStream } from 'node:stream/web'
 
+// BroadcastChannel polyfill for MSW WebSocket support
+class BroadcastChannelPolyfill {
+  name: string
+  onmessage: ((ev: MessageEvent) => void) | null = null
+  constructor(name: string) { this.name = name }
+  postMessage() {}
+  close() {}
+  addEventListener() {}
+  removeEventListener() {}
+  dispatchEvent() { return true }
+}
+
 Object.defineProperties(globalThis, {
   TextDecoder: { value: TextDecoder },
   TextEncoder: { value: TextEncoder },
   ReadableStream: { value: ReadableStream },
   TransformStream: { value: TransformStream },
+  BroadcastChannel: { value: BroadcastChannelPolyfill },
 })
 
 const { Blob, File } = require('node:buffer')

@@ -32,6 +32,12 @@
       "cache": false,
       "env": ["DATABASE_URL"]
     },
-    "lint": {}
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "test": {
+      "outputs": ["coverage/**"],
+      "dependsOn": [] 
+    }
   }
 }

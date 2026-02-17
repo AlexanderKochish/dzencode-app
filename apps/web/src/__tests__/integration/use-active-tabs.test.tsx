@@ -6,42 +6,39 @@ import { EventEmitter } from 'events'
 
 class FakeSocket extends EventEmitter {
   connected = true
-  on(event: string, listener: (...args: any[]) => void) {
+  on(event: string, listener: (...args: unknown[]) => void) {
     return super.on(event, listener)
   }
-  off(event: string, listener: (...args: any[]) => void) {
+  off(event: string, listener: (...args: unknown[]) => void) {
     return super.off(event, listener)
   }
-  emit(event: string, ...args: any[]) {
+  emit(event: string, ...args: unknown[]) {
     return super.emit(event, ...args)
   }
 }
 
 describe('useActiveTabs (integration)', () => {
-  it('начальное значение 0', () => {
-    const fakeSocket = new FakeSocket()
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <SocketContext.Provider
-        value={{ socket: fakeSocket as any, isConnected: true }}
-      >
-        {children}
-      </SocketContext.Provider>
-    )
+  let fakeSocket: FakeSocket
 
+  beforeEach(() => {
+    fakeSocket = new FakeSocket()
+  })
+
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <SocketContext.Provider
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      value={{ socket: fakeSocket as any, isConnected: true }}
+    >
+      {children}
+    </SocketContext.Provider>
+  )
+
+  it('начальное значение 0', () => {
     const { result } = renderHook(() => useActiveTabs(), { wrapper })
     expect(result.current).toBe(0)
   })
 
   it('обновляет счётчик при получении события updateActiveTabs', () => {
-    const fakeSocket = new FakeSocket()
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <SocketContext.Provider
-        value={{ socket: fakeSocket as any, isConnected: true }}
-      >
-        {children}
-      </SocketContext.Provider>
-    )
-
     const { result } = renderHook(() => useActiveTabs(), { wrapper })
 
     act(() => {
@@ -52,15 +49,6 @@ describe('useActiveTabs (integration)', () => {
   })
 
   it('обновляет счётчик несколько раз', () => {
-    const fakeSocket = new FakeSocket()
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <SocketContext.Provider
-        value={{ socket: fakeSocket as any, isConnected: true }}
-      >
-        {children}
-      </SocketContext.Provider>
-    )
-
     const { result } = renderHook(() => useActiveTabs(), { wrapper })
 
     act(() => {
@@ -75,15 +63,6 @@ describe('useActiveTabs (integration)', () => {
   })
 
   it('отписывается от события при размонтировании', () => {
-    const fakeSocket = new FakeSocket()
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <SocketContext.Provider
-        value={{ socket: fakeSocket as any, isConnected: true }}
-      >
-        {children}
-      </SocketContext.Provider>
-    )
-
     const { result, unmount } = renderHook(() => useActiveTabs(), { wrapper })
 
     act(() => {

@@ -1,5 +1,5 @@
 {
-  "extends": "@dzencode/tsconfig/base.json",
+  "extends": "../../packages/tsconfig/base.json",
   "compilerOptions": {
     "strict": true,
     "module": "NodeNext",
@@ -8,10 +8,11 @@
     "experimentalDecorators": true,
     "outDir": "./dist",
     "rootDir": "src",
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, startTransition } from 'react'
 import styles from './top-menu.module.scss'
 
 function formatTopDate(date: Date): string {
@@ -20,19 +20,30 @@ function getDayLabel(date: Date): string {
 
   if (isToday) return 'Today'
 
-  const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+  const days = [
+    'Воскресенье',
+    'Понедельник',
+    'Вторник',
+    'Среда',
+    'Четверг',
+    'Пятница',
+    'Суббота',
+  ]
   return days[date.getDay()]
 }
 
 function formatTime(date: Date): string {
-  return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+  return date.toLocaleTimeString('ru-RU', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 export const CurrentTime = () => {
   const [now, setNow] = useState<Date | null>(null)
 
   useEffect(() => {
-    setNow(new Date())
+    startTransition(() => setNow(new Date()))
     const interval = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(interval)
   }, [])

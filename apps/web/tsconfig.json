@@ -1,5 +1,5 @@
 {
-  "extends": "@dzencode/tsconfig/base.json",
+  "extends": "../../packages/tsconfig/base.json",
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -29,3 +29,5 @@
   ],
   "exclude": ["node_modules"]
 }
+
+//  "extends": "@dzencode/tsconfig/base.json"

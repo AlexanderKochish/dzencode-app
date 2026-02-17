@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // jest.polyfills.ts — Required for MSW v2 in jsdom environment
 // jsdom strips away Node.js fetch globals, but MSW v2 needs them
 

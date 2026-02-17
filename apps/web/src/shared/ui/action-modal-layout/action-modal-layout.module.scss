@@ -1,0 +1,113 @@
+@use '@/app/styles/variables' as *;
+
+.header {
+  padding: 25px 30px;
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+}
+
+.body {
+  padding: 0 30px 30px 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.statusDot {
+  color: $primary-green;
+  font-size: 24px;
+}
+
+.imageWrapper {
+  img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+}
+
+.info {
+  .title {
+    font-size: 14px;
+    text-decoration: underline;
+    text-decoration-color: #ddd;
+    margin-bottom: 5px;
+    color: #444;
+  }
+  .sn {
+    font-size: 12px;
+    color: #333;
+    .snText {
+      color: #999;
+    }
+  }
+}
+
+.footer {
+  background-color: $primary-green;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  align-items: center;
+}
+
+.cancelBtn {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.actionBtn {
+  border: none;
+  border-radius: 30px;
+  padding: 10px 25px;
+  background-color: white;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.red {
+  color: #ff6b6b;
+}
+
+.green {
+  color: #8bc34a;
+}
+
+.yellow {
+  color: #f1c40f;
+}

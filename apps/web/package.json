@@ -1,0 +1,39 @@
+{
+  "name": "@dzencode/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@apollo/client": "^4.1.4",
+    "@apollo/client-integration-nextjs": "^0.14.4",
+    "@dzencode/db": "*",
+    "@reduxjs/toolkit": "^2.11.2",
+    "axios": "^1.13.5",
+    "bootstrap": "^5.3.8",
+    "framer-motion": "^12.34.0",
+    "graphql": "^16.12.0",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "19.2.3",
+    "react-redux": "^9.2.0",
+    "sass": "^1.97.3",
+    "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "@dzencode/tsconfig": "*",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "prettier": "3.8.1",
+    "typescript": "^5"
+  }
+}

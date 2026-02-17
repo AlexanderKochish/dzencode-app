@@ -1,0 +1,25 @@
+@use '@/app/styles/variables' as *;
+
+/* Маленький зелёный кружок + число — как на скрине рядом с часами */
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: default;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $primary-green;
+  box-shadow: 0 0 0 2px rgba(139,195,74,.25);
+  flex-shrink: 0;
+}
+
+.count {
+  font-size: 13px;
+  font-weight: 700;
+  color: $text-dark;
+}

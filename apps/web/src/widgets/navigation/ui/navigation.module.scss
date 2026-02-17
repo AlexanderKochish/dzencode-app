@@ -1,0 +1,87 @@
+@use '@/app/styles/variables' as *;
+
+.navigation {
+  width: $nav-width;
+  height: calc(100vh - #{$header-height});
+  position: fixed;
+  left: 0;
+  top: $header-height;
+  background: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 30px;
+  z-index: 50;
+}
+
+.userBlock {
+  margin-bottom: 36px;
+}
+
+.avatarWrapper {
+  position: relative;
+}
+
+.avatarPlaceholder {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.imgAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.settingsBtn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #888;
+  transition: color 0.18s;
+  &:hover { color: $primary-green; }
+}
+
+.navMenu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  gap: 4px;
+}
+
+.navLink {
+  text-decoration: none;
+  color: #999;
+  font-weight: 500;
+  font-size: 13px;
+  padding: 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+
+  &:hover { color: $primary-green; }
+
+  &.active {
+    color: $text-dark;
+    border-bottom: 2px solid $primary-green;
+  }
+}

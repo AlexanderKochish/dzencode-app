@@ -1,0 +1,46 @@
+@use '@/app/styles/variables' as *;
+
+.container {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  max-width: 400px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-dark;
+  margin-bottom: 12px;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  background: white;
+  color: $text-dark;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover {
+    border-color: $primary-green;
+    background: #f8fdf3;
+  }
+
+  &.active {
+    border-color: $primary-green;
+    background: $primary-green;
+    color: white;
+  }
+}

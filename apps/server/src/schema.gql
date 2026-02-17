@@ -1,0 +1,80 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Guarantee {
+  end: String!
+  start: String!
+}
+
+type Mutation {
+  removeOrder(id: Int!): Order!
+  removeProduct(id: Int!): Product!
+}
+
+type Order {
+  date: DateTime!
+  description: String
+  id: Int!
+  products: [Product!]!
+  title: String!
+
+  """Сумма прихода в разных валютах"""
+  total: [OrderTotal!]!
+}
+
+type OrderTotal {
+  symbol: String!
+  value: Float!
+}
+
+type OrdersResponse {
+  items: [Order!]!
+  totalCount: Int!
+}
+
+type Price {
+  isDefault: Int!
+  symbol: String!
+  value: Float!
+}
+
+type Product {
+  date: String!
+  guarantee: Guarantee!
+  id: Int!
+  isNew: Int!
+  order: Order!
+  orderId: Int!
+  photo: String!
+  price: [Price!]!
+  serialNumber: Int!
+  specification: String!
+  title: String!
+  type: String!
+}
+
+type ProductsResponse {
+  items: [Product!]!
+  totalCount: Int!
+}
+
+type Query {
+  orders(limit: Int! = 20, offset: Int! = 0): OrdersResponse!
+  productSpecs: [String!]!
+  productTypes: [String!]!
+  products(limit: Int! = 20, offset: Int! = 0, spec: String, type: String): ProductsResponse!
+  translations(locale: String!, namespace: String): [Translation!]!
+}
+
+type Translation {
+  key: String!
+  locale: String!
+  namespace: String!
+  value: String!
+}

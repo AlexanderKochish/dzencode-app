@@ -1,33 +1,46 @@
 {
   "name": "dzencode-app",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "packageManager": "npm@11.8.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "db:generate": "turbo run generate --filter=@dzencode/db",
+    "db:migrate": "turbo run migrate:deploy --filter=@dzencode/db",
+    "db:seed": "turbo run seed --filter=@dzencode/db"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexanderKochish/dzencode-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AlexanderKochish/dzencode-app/issues"
+  },
+  "homepage": "https://github.com/AlexanderKochish/dzencode-app#readme",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "msw": "^2.12.10",
+    "turbo": "2.8.6"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.11.2",
-    "axios": "^1.13.5",
-    "bootstrap": "^5.3.8",
-    "framer-motion": "^12.34.0",
-    "next": "16.1.6",
-    "react": "19.2.3",
-    "react-bootstrap": "^2.10.10",
-    "react-dom": "19.2.3",
-    "react-redux": "^9.2.0",
-    "sass": "^1.97.3",
-    "socket.io-client": "^4.8.3"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "typescript": "^5"
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.3",
+    "server-only": "^0.0.1"
   }
 }

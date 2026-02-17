@@ -3,10 +3,7 @@ import { cache } from 'react'
 import 'server-only'
 
 function getServerApiUrl(): string {
-  const url =
-    process.env.INTERNAL_API_URL ||
-    process.env.NEXT_PUBLIC_API_URL ||
-    'http://localhost:3001'
+  const url = 'http://dzencode-app.railway.internal:3001'
 
   return url.endsWith('/graphql') ? url : `${url}/graphql`
 }

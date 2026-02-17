@@ -1,6 +1,5 @@
 'use server'
-
-import { TypedDocumentNode, OperationVariables, ApolloError } from '@apollo/client'
+import { type TypedDocumentNode, type OperationVariables } from '@apollo/client'
 import { getClient } from '../lib/apollo-client'
 
 type CacheStrategy = RequestCache
@@ -13,7 +12,7 @@ interface QueryOptions<TVars> {
 
 interface QueryResult<TData> {
   data: TData | null
-  error: ApolloError | Error | null
+  error: { message: string; code?: string; stack?: string } | null
 }
 
 const RETRY_COUNT = 3

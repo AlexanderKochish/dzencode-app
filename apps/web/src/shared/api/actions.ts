@@ -56,16 +56,13 @@ export const getClientAction = async <
         },
         errorPolicy: 'all',
       })
-
       return { data: result.data ?? null, error: result.error ?? null }
     } catch (error) {
       const isLast = attempt === RETRY_COUNT
-
       if (isRetryableError(error) && !isLast) {
         await sleep(RETRY_DELAY_MS * attempt)
         continue
       }
-
       return {
         data: null,
         error: error instanceof Error ? error : new Error(String(error)),

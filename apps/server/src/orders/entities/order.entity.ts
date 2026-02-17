@@ -19,7 +19,7 @@ export class Order {
   title!: string;
 
   @Field()
-  date!: string;
+  date!: Date;
 
   @Field({ nullable: true })
   description?: string;

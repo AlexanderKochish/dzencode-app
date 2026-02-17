@@ -5,7 +5,8 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { createClient } from 'redis';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { Server, ServerOptions } from 'socket.io';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { getCorsOrigins } from './shared/get-cors-origins';
 
 type RedisAdapterConstructor = ReturnType<typeof createAdapter>;
 
@@ -33,19 +34,16 @@ class RedisIoAdapter extends IoAdapter {
   }
 }
 
-function getCorsOrigins(): string | string[] | RegExp {
-  const isDev = process.env.NODE_ENV !== 'production';
-
-  if (isDev) {
-    return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-  }
-
-  const baseUrl = process.env.BASE_URL ?? 'http://localhost:3000';
-  return baseUrl.split(',').map((u) => u.trim());
-}
-
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   const corsOrigins = getCorsOrigins();
 

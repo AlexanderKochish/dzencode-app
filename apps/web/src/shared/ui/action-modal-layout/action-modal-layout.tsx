@@ -13,10 +13,11 @@ interface ActionModalLayoutProps {
   onAction: () => void
   title: string
   variant?: ModalVariant
-
   itemTitle?: string
   itemImage?: string
   children?: React.ReactNode
+  cancelText?: string
+  actionText?: string
 }
 
 const VARIANTS = {
@@ -24,19 +25,16 @@ const VARIANTS = {
     colorClass: styles.red,
     footerColor: '#8bc34a',
     icon: '🗑',
-    btnText: 'УДАЛИТЬ',
   },
   success: {
     colorClass: styles.green,
     footerColor: '#8bc34a',
     icon: '✅',
-    btnText: 'ГОТОВО',
   },
   warning: {
     colorClass: styles.yellow,
     footerColor: '#f1c40f',
     icon: '⚠️',
-    btnText: 'ПОНЯТНО',
   },
 }
 
@@ -49,6 +47,8 @@ export const ActionModalLayout = ({
   itemTitle,
   itemImage,
   children,
+  cancelText = 'ОТМЕНИТЬ',
+  actionText = 'УДАЛИТЬ',
 }: ActionModalLayoutProps) => {
   const config = VARIANTS[variant]
 
@@ -84,14 +84,14 @@ export const ActionModalLayout = ({
         style={{ backgroundColor: config.footerColor }}
       >
         <button className={styles.cancelBtn} onClick={onClose}>
-          ОТМЕНИТЬ
+          {cancelText}
         </button>
 
         <button
           className={`${styles.actionBtn} ${config.colorClass}`}
           onClick={onAction}
         >
-          <span className={styles.icon}>{config.icon}</span> {config.btnText}
+          <span className={styles.icon}>{config.icon}</span> {actionText}
         </button>
       </div>
     </Modal>

@@ -50,7 +50,10 @@
   background: white;
   cursor: pointer;
   transition: border-color 0.18s;
-  &:focus { outline: none; border-color: $primary-green; }
+  &:focus {
+    outline: none;
+    border-color: $primary-green;
+  }
 }
 
 .tableWrapper {
@@ -58,8 +61,13 @@
   overflow-x: auto;
   padding-bottom: 12px;
 
-  &::-webkit-scrollbar { height: 5px; }
-  &::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+  &::-webkit-scrollbar {
+    height: 5px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+  }
 }
 
 .list {
@@ -94,7 +102,9 @@
   color: #444;
   transition: box-shadow 0.18s;
 
-  &:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09); }
+  &:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09);
+  }
 }
 
 .statusDot {
@@ -110,8 +120,12 @@
   border-radius: 50%;
 }
 
-.dotGreen { background: $primary-green; }
-.dotGray  { background: #bbb; }
+.dotGreen {
+  background: $primary-green;
+}
+.dotGray {
+  background: #bbb;
+}
 
 .photo {
   display: flex;
@@ -144,9 +158,15 @@
   margin-top: 2px;
 }
 
-.statusText { font-size: 13px; }
-.statusFree { color: $primary-green; }
-.statusBusy { color: $text-dark; }
+.statusText {
+  font-size: 13px;
+}
+.statusFree {
+  color: $primary-green;
+}
+.statusBusy {
+  color: $text-dark;
+}
 
 .guarantee {
   display: flex;
@@ -167,8 +187,15 @@
   gap: 1px;
 }
 
-.priceUsd { font-size: 11px; color: #999; }
-.priceUah { font-size: 13px; color: $text-dark; font-weight: 500; }
+.priceUsd {
+  font-size: 11px;
+  color: #999;
+}
+.priceUah {
+  font-size: 13px;
+  color: $text-dark;
+  font-weight: 500;
+}
 
 .groupName,
 .orderName {
@@ -190,10 +217,12 @@
 .deleteBtn {
   background: none;
   border: none;
-  font-size: 14px;
+  font-size: 1.2rem;
   color: #ccc;
   cursor: pointer;
   padding: 2px;
   transition: color 0.18s;
-  &:hover { color: #e74c3c; }
+  &:hover {
+    color: #e74c3c;
+  }
 }

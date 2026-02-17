@@ -22,9 +22,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
     socketInstance.on('connect', () => setIsConnected(true))
     socketInstance.on('disconnect', () => setIsConnected(false))
-    socketInstance.on('connect_error', (err) => {
-      console.error(err.message)
-    })
+    socketInstance.on('connect_error', (err) => console.error('[Socket]', err.message))
 
     startTransition(() => setSocket(socketInstance))
 

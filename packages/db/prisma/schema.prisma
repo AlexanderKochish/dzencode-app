@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,26 +12,46 @@ model Order {
   title       String
   date        DateTime
   description String?
-  products    Product[] 
+  products    Product[]
   createdAt   DateTime  @default(now())
+
+  @@index([date(sort: Desc)])
+  @@index([createdAt])
+  @@map("orders")
 }
 
 model Product {
   id            Int      @id @default(autoincrement())
   serialNumber  Int
-  isNew         Int      
+  isNew         Int
   photo         String?
   title         String
   type          String
   specification String
-  
-
-  guarantee     Json     
-  price         Json     
-
+  guarantee     Json
+  price         Json
   orderId       Int
   order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  
   date          DateTime
   createdAt     DateTime @default(now())
+
+  @@index([orderId])
+  @@index([type])
+  @@index([specification])
+  @@index([date(sort: Desc)])
+  @@index([createdAt])
+  @@map("products")
+}
+
+model Translation {
+  id        Int      @id @default(autoincrement())
+  locale    String
+  namespace String
+  key       String
+  value     String
+  createdAt DateTime @default(now())
+
+  @@unique([locale, namespace, key])
+  @@index([locale, namespace])
+  @@map("translations")
 }

@@ -1,16 +1,16 @@
 {
   "name": "@dzencode/db",
   "version": "0.0.0",
- "main": "./dist/index.js",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup index.ts --format cjs,esm --dts",
-    "dev": "tsup index.ts --format cjs,esm --watch --dts",
+    "build": "prisma generate && tsup index.ts --format cjs,esm --dts",
+    "dev": "prisma generate && tsup index.ts --format cjs,esm --watch --dts",
     "push": "prisma db push",
     "generate": "prisma generate",
     "migrate:deploy": "prisma migrate deploy",
-    "seed": "prisma db seed"
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "latest"
@@ -21,8 +21,5 @@
     "prisma": "latest",
     "tsx": "^4.21.0",
     "tsup": "latest"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   }
 }

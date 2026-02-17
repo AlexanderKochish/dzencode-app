@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EventsGateway } from '@/events/events.gateway';
+
+const MAX_LIMIT = 100;
 
 @Injectable()
 export class ProductsService {
@@ -15,6 +17,9 @@ export class ProductsService {
     type?: string,
     spec?: string,
   ) {
+    const safeLimit = Math.min(Math.max(limit, 1), MAX_LIMIT);
+    const safeOffset = Math.max(offset, 0);
+
     const where: Record<string, unknown> = {};
     if (type) where.type = type;
     if (spec) where.specification = spec;
@@ -22,8 +27,8 @@ export class ProductsService {
     const [items, totalCount] = await this.prisma.client.$transaction([
       this.prisma.client.product.findMany({
         where,
-        take: limit,
-        skip: offset,
+        take: safeLimit,
+        skip: safeOffset,
         include: { order: true },
         orderBy: { date: 'desc' },
       }),
@@ -52,9 +57,18 @@ export class ProductsService {
   }
 
   async remove(id: number) {
-    const deleted = await this.prisma.client.product.delete({
-      where: { id: Number(id) },
+    const product = await this.prisma.client.product.findUnique({
+      where: { id },
     });
+
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+
+    const deleted = await this.prisma.client.product.delete({
+      where: { id },
+    });
+
     this.eventsGateway.sendToAll('productDeleted', { id });
     return deleted;
   }

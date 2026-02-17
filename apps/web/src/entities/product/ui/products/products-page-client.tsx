@@ -11,6 +11,8 @@ import { Pagination } from '@/shared/ui/pagination/pagination'
 import { useUpdateSearchParams } from '@/shared/hooks/use-update-search-params'
 import { useProductSocket } from '../../hooks/use-product-socket'
 import { useEffect } from 'react'
+import { useTranslations } from '@/shared/i18n/i18n-context'
+import { TruncatedText } from '@/shared/ui/truncated-text/truncated-text'
 
 interface Props {
   initialProducts: Product[]
@@ -23,6 +25,7 @@ interface Props {
 const ProductsPageClient = ({ initialProducts, pageSize, totalCount, allTypes, allSpecs }: Props) => {
   useProductSocket()
   const dispatch = useAppDispatch()
+  const t = useTranslations('products')
   const { updateQuery, searchParams } = useUpdateSearchParams()
 
   const currentType = searchParams.get('type') || ''
@@ -35,33 +38,33 @@ const ProductsPageClient = ({ initialProducts, pageSize, totalCount, allTypes, a
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
-        <h1>Продукты / {totalCount}</h1>
+        <h1>{t('title')} / {totalCount}</h1>
 
         <div className={styles.filters}>
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Тип:</span>
+            <span className={styles.filterLabel}>{t('type_filter')}</span>
             <select
               className={styles.filterSelect}
               value={currentType}
               onChange={(e) => updateQuery({ type: e.target.value || null, spec: currentSpec || null })}
             >
-              <option value="">Все</option>
-              {allTypes.map((t) => (
-                <option key={t} value={t}>{t}</option>
+              <option value="">{t('all')}</option>
+              {allTypes.map((type) => (
+                <option key={type} value={type}>{type}</option>
               ))}
             </select>
           </div>
 
           <div className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Спецификация:</span>
+            <span className={styles.filterLabel}>{t('spec_filter')}</span>
             <select
               className={styles.filterSelect}
               value={currentSpec}
               onChange={(e) => updateQuery({ spec: e.target.value || null, type: currentType || null })}
             >
-              <option value="">Все</option>
-              {allSpecs.map((s) => (
-                <option key={s} value={s}>{s}</option>
+              <option value="">{t('all')}</option>
+              {allSpecs.map((spec) => (
+                <option key={spec} value={spec}>{spec}</option>
               ))}
             </select>
           </div>
@@ -87,21 +90,21 @@ const ProductsPageClient = ({ initialProducts, pageSize, totalCount, allTypes, a
               </div>
 
               <div className={styles.nameInfo}>
-                <span className={styles.productTitle}>{product.title}</span>
+                <TruncatedText text={product.title} maxLength={30} className={styles.productTitle} />
                 <span className={styles.sn}>SN-{product.serialNumber}</span>
               </div>
 
               <div className={`${styles.statusText} ${product.isNew ? styles.statusFree : styles.statusBusy}`}>
-                {product.isNew ? 'свободен' : 'В ремонте'}
+                {product.isNew ? t('free') : t('in_repair')}
               </div>
 
               <div className={styles.guarantee}>
-                <span>с {formatDateShort(product.guarantee.start)}</span>
-                <span>по {formatDateShort(product.guarantee.end)}</span>
+                <span>{t('guarantee_from')} {formatDateShort(product.guarantee.start)}</span>
+                <span>{t('guarantee_to')} {formatDateShort(product.guarantee.end)}</span>
               </div>
 
               <div className={styles.condition}>
-                {product.isNew ? 'новый' : 'Б / У'}
+                {product.isNew ? t('new') : t('used')}
               </div>
 
               <div className={styles.price}>
@@ -113,11 +116,11 @@ const ProductsPageClient = ({ initialProducts, pageSize, totalCount, allTypes, a
               </div>
 
               <div className={styles.groupName}>
-                Длинное предлинное название группы
+                <TruncatedText text="Длинное предлинное название группы" maxLength={20} />
               </div>
 
               <div className={styles.orderName}>
-                {product.order?.title ?? '—'}
+                <TruncatedText text={product.order?.title ?? '—'} maxLength={25} />
               </div>
 
               <div className={styles.date}>{formatDateShort(product.date)}</div>
@@ -125,7 +128,7 @@ const ProductsPageClient = ({ initialProducts, pageSize, totalCount, allTypes, a
               <button
                 className={styles.deleteBtn}
                 onClick={() => dispatch(selectProduct(product.id))}
-                aria-label="Удалить продукт"
+                aria-label={t('delete_btn')}
               >
                 🗑
               </button>

@@ -4,17 +4,24 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import styles from './navigation.module.scss'
 import Image from 'next/image'
+import { Locale } from '@/shared/i18n/config'
+import { useTranslations } from '@/shared/i18n/i18n-context'
 
-export const Navigation = () => {
+interface Props {
+  locale: Locale
+}
+
+const menuItems = [
+  { key: 'orders', path: 'orders' },
+  { key: 'groups', path: 'groups' },
+  { key: 'products', path: 'products' },
+  { key: 'users', path: 'users' },
+  { key: 'settings', path: 'settings' },
+] as const
+
+export const Navigation = ({ locale }: Props) => {
   const pathname = usePathname()
-
-  const menuItems = [
-    { name: 'ПРИХОД', path: '/orders' },
-    { name: 'ГРУППЫ', path: '/groups' },
-    { name: 'ПРОДУКТЫ', path: '/products' },
-    { name: 'ПОЛЬЗОВАТЕЛИ', path: '/users' },
-    { name: 'НАСТРОЙКИ', path: '/settings' },
-  ]
+  const t = useTranslations('navigation')
 
   return (
     <div className={styles.navigation}>
@@ -22,28 +29,31 @@ export const Navigation = () => {
         <div className={styles.avatarWrapper}>
           <div className={styles.avatarPlaceholder}>
             <Image
-              src={'/placeholder.jpg'}
+              src="/placeholder.jpg"
               alt="user avatar"
               width={100}
               height={100}
               className={styles.imgAvatar}
             />
           </div>
-
           <button className={styles.settingsBtn}>⚙</button>
         </div>
       </div>
 
       <nav className={styles.navMenu}>
-        {menuItems.map((item) => (
-          <Link
-            key={item.path}
-            href={item.path}
-            className={`${styles.navLink} ${pathname === item.path ? styles.active : ''}`}
-          >
-            {item.name}
-          </Link>
-        ))}
+        {menuItems.map((item) => {
+          const href = `/${locale}/${item.path}`
+          const isActive = pathname === href || pathname.startsWith(`${href}/`)
+          return (
+            <Link
+              key={item.path}
+              href={href}
+              className={`${styles.navLink} ${isActive ? styles.active : ''}`}
+            >
+              {t(item.key)}
+            </Link>
+          )
+        })}
       </nav>
     </div>
   )

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
+import { DEFAULT_LOCALE } from '@/shared/i18n/config'
 
-export default function Home() {
-  redirect('/orders')
+export default function RootPage() {
+  redirect(`/${DEFAULT_LOCALE}/orders`)
 }

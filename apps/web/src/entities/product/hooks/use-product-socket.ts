@@ -13,9 +13,7 @@ export const useProductSocket = () => {
   useEffect(() => {
     if (!socket) return
 
-    const handleDelete = () => {
-      router.refresh()
-    }
+    const handleDelete = () => router.refresh()
 
     socket.on('productDeleted', handleDelete)
 

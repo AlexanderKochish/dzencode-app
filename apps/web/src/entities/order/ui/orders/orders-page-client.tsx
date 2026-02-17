@@ -5,12 +5,14 @@ import { selectOrder, setOrders } from '@/entities/order/model/order-slice'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import styles from './orders.module.scss'
-import { formatDateForOrder, formatDateShort } from '@/shared/lib/date/format-date'
+import { formatDateForOrder } from '@/shared/lib/date/format-date'
 import { Order } from '@/entities/order/model/types'
 import { calculateTotal } from '@/entities/order/lib/calculate-order-total'
 import { OrderDeleteModal } from '@/widgets/order-delete-modal/ui/order-delete-modal'
 import { Pagination } from '@/shared/ui/pagination/pagination'
 import { useState, useEffect } from 'react'
+import { useTranslations } from '@/shared/i18n/i18n-context'
+import { TruncatedText } from '@/shared/ui/truncated-text/truncated-text'
 
 interface Props {
   initialOrders: Order[]
@@ -18,8 +20,13 @@ interface Props {
   pageSize: number
 }
 
-export default function OrdersPageClient({ initialOrders, totalCount, pageSize }: Props) {
+export default function OrdersPageClient({
+  initialOrders,
+  totalCount,
+  pageSize,
+}: Props) {
   const dispatch = useAppDispatch()
+  const t = useTranslations('orders')
   const [openOrderId, setOpenOrderId] = useState<number | null>(null)
 
   const openOrder = initialOrders.find((o) => o.id === openOrderId) ?? null
@@ -36,11 +43,15 @@ export default function OrdersPageClient({ initialOrders, totalCount, pageSize }
     <div className={styles.pageContainer}>
       <div className={styles.header}>
         <button className={styles.plusBtn}>+</button>
-        <h1>Приходы / {totalCount}</h1>
+        <h1>
+          {t('title')} / {totalCount}
+        </h1>
       </div>
 
       <div className={styles.workspace}>
-        <div className={`${styles.ordersList} ${openOrder ? styles.ordersListNarrow : ''}`}>
+        <div
+          className={`${styles.ordersList} ${openOrder ? styles.ordersListNarrow : ''}`}
+        >
           <AnimatePresence>
             {initialOrders.map((order) => {
               const isActive = order.id === openOrderId
@@ -57,40 +68,54 @@ export default function OrdersPageClient({ initialOrders, totalCount, pageSize }
                   transition={{ duration: 0.22 }}
                   onClick={() => handleOrderClick(order.id)}
                 >
-                  <div className={styles.orderTitle}>{order.title}</div>
+                  <div className={styles.orderTitle}>
+                    <TruncatedText text={order.title} maxLength={35} />
+                  </div>
 
                   <div className={styles.productsCount}>
                     <div className={styles.listIcon}>☰</div>
                     <div className={styles.countInfo}>
                       <strong>{order.products.length}</strong>
-                      <span>Продукта</span>
+                      <span>{t('products_count')}</span>
                     </div>
                   </div>
 
                   <div className={styles.dates}>
                     <span className={styles.dateShort}>
-                      {String(order.products.length).padStart(2, '0')} / {String(20).padStart(2, '0')}
+                      {String(order.products.length).padStart(2, '0')} /{' '}
+                      {String(20).padStart(2, '0')}
                     </span>
-                    <span className={styles.dateLong}>{formatDateForOrder(order.date)}</span>
+                    <span className={styles.dateLong}>
+                      {formatDateForOrder(order.date)}
+                    </span>
                   </div>
 
                   <div className={styles.prices}>
-                    {usd > 0 && <span className={styles.priceUsd}>{usd.toLocaleString('ru-RU')} $</span>}
-                    {uah > 0 && <span className={styles.priceUah}>{uah.toLocaleString('ru-RU')} UAH</span>}
+                    {usd > 0 && (
+                      <span className={styles.priceUsd}>
+                        {usd.toLocaleString('ru-RU')} $
+                      </span>
+                    )}
+                    {uah > 0 && (
+                      <span className={styles.priceUah}>
+                        {uah.toLocaleString('ru-RU')} UAH
+                      </span>
+                    )}
                   </div>
 
+                  <div className={styles.actionsCell}>
+                    <button
+                      className={styles.deleteBtn}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        dispatch(selectOrder(order.id))
+                      }}
+                      aria-label={t('delete_btn')}
+                    >
+                      🗑
+                    </button>
+                  </div>
                   {isActive && <div className={styles.chevron}>›</div>}
-
-                  <button
-                    className={styles.deleteBtn}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      dispatch(selectOrder(order.id))
-                    }}
-                    aria-label="Удалить приход"
-                  >
-                    🗑
-                  </button>
                 </motion.div>
               )
             })}
@@ -110,21 +135,23 @@ export default function OrdersPageClient({ initialOrders, totalCount, pageSize }
               <button
                 className={styles.closeBtn}
                 onClick={() => setOpenOrderId(null)}
-                aria-label="Закрыть"
+                aria-label={t('cancel_btn')}
               >
                 ✕
               </button>
 
-              <h2 className={styles.detailTitle}>{openOrder.title}</h2>
+              <h2 className={styles.detailTitle}>
+                <TruncatedText text={openOrder.title} maxLength={50} />
+              </h2>
 
               <button className={styles.addProductBtn}>
                 <span className={styles.addIcon}>+</span>
-                Добавить продукт
+                {t('add_product')}
               </button>
 
               <div className={styles.productList}>
                 {openOrder.products.length === 0 ? (
-                  <p className={styles.emptyMsg}>В этом приходе нет продуктов</p>
+                  <p className={styles.emptyMsg}>{t('empty')}</p>
                 ) : (
                   openOrder.products.map((product) => (
                     <div key={product.id} className={styles.productRow}>
@@ -141,13 +168,22 @@ export default function OrdersPageClient({ initialOrders, totalCount, pageSize }
                         />
                       </div>
                       <div className={styles.productMeta}>
-                        <span className={styles.productName}>{product.title}</span>
-                        <span className={styles.productSn}>SN-{product.serialNumber}</span>
+                        <TruncatedText
+                          text={product.title}
+                          maxLength={25}
+                          className={styles.productName}
+                        />
+                        <span className={styles.productSn}>
+                          SN-{product.serialNumber}
+                        </span>
                       </div>
                       <span className={styles.productStatus}>
-                        {product.isNew ? 'Свободен' : 'В ремонте'}
+                        {product.isNew ? t('free') : t('in_repair')}
                       </span>
-                      <button className={styles.productDelBtn} aria-label="Удалить продукт">
+                      <button
+                        className={styles.productDelBtn}
+                        aria-label={t('delete_btn')}
+                      >
                         🗑
                       </button>
                     </div>

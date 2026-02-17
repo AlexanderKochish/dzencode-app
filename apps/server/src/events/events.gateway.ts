@@ -6,16 +6,11 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { RedisService } from '../redis/redis.service';
-
-const isDev = process.env.NODE_ENV !== 'production';
-
-const wsOrigin = isDev
-  ? /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/
-  : (process.env.BASE_URL ?? 'http://localhost:3000').split(',').map((u) => u.trim());
+import { getCorsOrigins } from '../shared/get-cors-origins';
 
 @WebSocketGateway({
   cors: {
-    origin: wsOrigin,
+    origin: getCorsOrigins(),
     methods: ['GET', 'POST'],
     credentials: true,
   },

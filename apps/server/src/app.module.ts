@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { RedisModule } from './redis/redis.module';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
+import { TranslationsModule } from './translations/translations.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
@@ -28,10 +27,9 @@ import redisConfig from './config/redis.config';
     RedisModule,
     OrdersModule,
     ProductsModule,
+    TranslationsModule,
     PrismaModule,
     EventsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

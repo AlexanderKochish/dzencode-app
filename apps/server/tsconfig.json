@@ -8,11 +8,11 @@
     "experimentalDecorators": true,
     "outDir": "./dist",
     "rootDir": "src",
+    "skipLibCheck": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@dzencode/db": ["../../packages/db/index.ts"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "src/**/*.spec.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
 }

@@ -27,6 +27,9 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <html lang={locale}>
+      <head>
+        <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png" />
+      </head>
       <body>
         <I18nProvider locale={locale as Locale} translations={translations}>
           <SocketProvider>

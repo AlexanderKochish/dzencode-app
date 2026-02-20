@@ -12,8 +12,6 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
-  turbopack: {},
-
   images: {
     unoptimized: process.env.NODE_ENV === 'development',
   },

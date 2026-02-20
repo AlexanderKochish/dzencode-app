@@ -3,11 +3,13 @@ import { NotFoundException } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { EventsGateway } from '../events/events.gateway';
+import { PushService } from '../push/push.service';
 
 describe('ProductsService', () => {
   let service: ProductsService;
   let prismaService: { client: Record<string, any> };
   let eventsGateway: { sendToAll: jest.Mock };
+  let pushService: { broadcast: jest.Mock };
 
   const mockProduct = {
     id: 1,
@@ -36,15 +38,15 @@ describe('ProductsService', () => {
       },
     };
 
-    eventsGateway = {
-      sendToAll: jest.fn(),
-    };
+    eventsGateway = { sendToAll: jest.fn() };
+    pushService = { broadcast: jest.fn().mockResolvedValue(undefined) };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProductsService,
         { provide: PrismaService, useValue: prismaService },
         { provide: EventsGateway, useValue: eventsGateway },
+        { provide: PushService, useValue: pushService },
       ],
     }).compile();
 
@@ -173,7 +175,7 @@ describe('ProductsService', () => {
   });
 
   describe('remove', () => {
-    it('should delete an existing product and emit event', async () => {
+    it('should delete an existing product, emit event, and send push', async () => {
       prismaService.client.product.findUnique.mockResolvedValue(mockProduct);
       prismaService.client.product.delete.mockResolvedValue(mockProduct);
 
@@ -189,6 +191,12 @@ describe('ProductsService', () => {
       expect(eventsGateway.sendToAll).toHaveBeenCalledWith('productDeleted', {
         id: 1,
       });
+      expect(pushService.broadcast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Продукт удалён',
+          tag: 'product-deleted-1',
+        }),
+      );
     });
 
     it('should throw NotFoundException when product does not exist', async () => {
@@ -200,6 +208,7 @@ describe('ProductsService', () => {
       );
       expect(prismaService.client.product.delete).not.toHaveBeenCalled();
       expect(eventsGateway.sendToAll).not.toHaveBeenCalled();
+      expect(pushService.broadcast).not.toHaveBeenCalled();
     });
   });
 });

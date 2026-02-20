@@ -3,11 +3,13 @@ import { NotFoundException } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { EventsGateway } from '../events/events.gateway';
+import { PushService } from '../push/push.service';
 
 describe('OrdersService', () => {
   let service: OrdersService;
   let prismaService: { client: Record<string, any> };
   let eventsGateway: { sendToAll: jest.Mock };
+  let pushService: { broadcast: jest.Mock };
 
   const mockOrder = {
     id: 1,
@@ -30,15 +32,15 @@ describe('OrdersService', () => {
       },
     };
 
-    eventsGateway = {
-      sendToAll: jest.fn(),
-    };
+    eventsGateway = { sendToAll: jest.fn() };
+    pushService = { broadcast: jest.fn().mockResolvedValue(undefined) };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OrdersService,
         { provide: PrismaService, useValue: prismaService },
         { provide: EventsGateway, useValue: eventsGateway },
+        { provide: PushService, useValue: pushService },
       ],
     }).compile();
 
@@ -70,7 +72,6 @@ describe('OrdersService', () => {
       await service.findAll(0, 0);
 
       const transactionArg = prismaService.client.$transaction.mock.calls[0][0];
-      // The findMany should be called with take: 1 (clamped from 0)
       expect(transactionArg).toHaveLength(2);
     });
 
@@ -92,7 +93,7 @@ describe('OrdersService', () => {
   });
 
   describe('remove', () => {
-    it('should delete an existing order and emit event', async () => {
+    it('should delete an existing order, emit event, and send push', async () => {
       prismaService.client.order.findUnique.mockResolvedValue(mockOrder);
       prismaService.client.order.delete.mockResolvedValue(mockOrder);
 
@@ -108,6 +109,12 @@ describe('OrdersService', () => {
       expect(eventsGateway.sendToAll).toHaveBeenCalledWith('orderDeleted', {
         id: 1,
       });
+      expect(pushService.broadcast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Заказ удалён',
+          tag: 'order-deleted-1',
+        }),
+      );
     });
 
     it('should throw NotFoundException when order does not exist', async () => {
@@ -119,6 +126,7 @@ describe('OrdersService', () => {
       );
       expect(prismaService.client.order.delete).not.toHaveBeenCalled();
       expect(eventsGateway.sendToAll).not.toHaveBeenCalled();
+      expect(pushService.broadcast).not.toHaveBeenCalled();
     });
   });
 });

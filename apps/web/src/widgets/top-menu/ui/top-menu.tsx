@@ -3,6 +3,7 @@
 import styles from './top-menu.module.scss'
 import { CurrentTime } from './current-time'
 import { ActiveTabsCounter } from '@/shared/ui/active-tabs-counter/active-tabs-counter'
+import { PushButton } from '@/shared/ui/push-button/push-button'
 
 export const TopMenu = () => {
   return (
@@ -17,6 +18,7 @@ export const TopMenu = () => {
       </div>
 
       <div className={styles.infoBlock}>
+        <PushButton />
         <CurrentTime />
         <ActiveTabsCounter />
       </div>

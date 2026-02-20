@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EventsGateway } from '@/events/events.gateway';
+import { PushService } from '@/push/push.service';
 
 const MAX_LIMIT = 100;
 
@@ -9,6 +10,7 @@ export class ProductsService {
   constructor(
     private prisma: PrismaService,
     private readonly eventsGateway: EventsGateway,
+    private readonly pushService: PushService,
   ) {}
 
   async findAll(
@@ -70,6 +72,16 @@ export class ProductsService {
     });
 
     this.eventsGateway.sendToAll('productDeleted', { id });
+
+    this.pushService
+      .broadcast({
+        title: 'Продукт удалён',
+        body: `Продукт "${product.title}" (#${id}) был удалён`,
+        tag: `product-deleted-${id}`,
+        url: '/products',
+      })
+      .catch(() => {});
+
     return deleted;
   }
 }

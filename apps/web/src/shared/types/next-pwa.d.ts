@@ -1,4 +1,4 @@
-declare module 'next-pwa' {
+declare module '@ducanh2912/next-pwa' {
   import type { NextConfig } from 'next'
 
   interface PWAConfig {
@@ -20,9 +20,11 @@ declare module 'next-pwa' {
     }
     cacheOnFrontEndNav?: boolean
     reloadOnOnline?: boolean
-    customWorkerDir?: string
     customWorkerSrc?: string
     customWorkerDest?: string
+    customWorkerPrefix?: string
+    extendDefaultRuntimeCaching?: boolean
+    workboxOptions?: Record<string, unknown>
   }
 
   function withPWAInit(config: PWAConfig): (nextConfig: NextConfig) => NextConfig

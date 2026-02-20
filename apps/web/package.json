@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/client": "^4.1.4",
     "@apollo/client-integration-nextjs": "^0.14.4",
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@dzencode/db": "*",
     "@reduxjs/toolkit": "^2.11.2",
     "axios": "^1.13.5",

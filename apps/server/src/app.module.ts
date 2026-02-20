@@ -9,15 +9,17 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { PrismaModule } from './prisma/prisma.module';
 import { EventsModule } from './events/events.module';
+import { PushModule } from './push/push.module';
 import { ConfigModule } from '@nestjs/config';
 import redisConfig from './config/redis.config';
+import vapidConfig from './config/vapid.config';
 
 @Module({
   controllers: [HealthController],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [redisConfig],
+      load: [redisConfig, vapidConfig],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -32,6 +34,7 @@ import redisConfig from './config/redis.config';
     TranslationsModule,
     PrismaModule,
     EventsModule,
+    PushModule,
   ],
 })
 export class AppModule {}

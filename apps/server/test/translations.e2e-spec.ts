@@ -1,10 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TranslationsResolver } from '@/translations/translations.resolver';
 import { TranslationsService } from '@/translations/translations.service';
+import { Server } from 'http';
+
+interface GraphQLBody {
+  data: {
+    translations: Array<{
+      key: string;
+      value: string;
+      namespace: string;
+      locale: string;
+    }>;
+  };
+}
 
 describe('Translations GraphQL (e2e)', () => {
   let app: INestApplication;
@@ -61,19 +73,16 @@ describe('Translations GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query })
         .expect(200);
 
-      const { data } = response.body;
-      expect(data.translations).toHaveLength(2);
-      expect(data.translations[0].key).toBe('hello');
-      expect(data.translations[0].locale).toBe('ru');
-      expect(translationsService.findAll).toHaveBeenCalledWith(
-        'ru',
-        undefined,
-      );
+      const body = response.body as GraphQLBody;
+      expect(body.data.translations).toHaveLength(2);
+      expect(body.data.translations[0].key).toBe('hello');
+      expect(body.data.translations[0].locale).toBe('ru');
+      expect(translationsService.findAll).toHaveBeenCalledWith('ru', undefined);
     });
 
     it('should filter by namespace', async () => {
@@ -88,13 +97,14 @@ describe('Translations GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query })
         .expect(200);
 
       expect(translationsService.findAll).toHaveBeenCalledWith('ru', 'common');
-      expect(response.body.data.translations).toHaveLength(1);
+      const body = response.body as GraphQLBody;
+      expect(body.data.translations).toHaveLength(1);
     });
 
     it('should return empty array when no translations found', async () => {
@@ -109,12 +119,13 @@ describe('Translations GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query })
         .expect(200);
 
-      expect(response.body.data.translations).toEqual([]);
+      const body = response.body as GraphQLBody;
+      expect(body.data.translations).toEqual([]);
     });
   });
 });

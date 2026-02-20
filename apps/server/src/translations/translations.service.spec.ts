@@ -2,9 +2,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TranslationsService } from './translations.service';
 import { PrismaService } from '../prisma/prisma.service';
 
+interface MockPrismaClient {
+  translation: {
+    findMany: jest.Mock;
+    findUnique: jest.Mock;
+  };
+}
+
 describe('TranslationsService', () => {
   let service: TranslationsService;
-  let prismaService: { client: Record<string, any> };
+  let mockClient: MockPrismaClient;
 
   const mockTranslation = {
     key: 'hello',
@@ -14,19 +21,17 @@ describe('TranslationsService', () => {
   };
 
   beforeEach(async () => {
-    prismaService = {
-      client: {
-        translation: {
-          findMany: jest.fn(),
-          findUnique: jest.fn(),
-        },
+    mockClient = {
+      translation: {
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
       },
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TranslationsService,
-        { provide: PrismaService, useValue: prismaService },
+        { provide: PrismaService, useValue: { client: mockClient } },
       ],
     }).compile();
 
@@ -43,14 +48,12 @@ describe('TranslationsService', () => {
 
   describe('findAll', () => {
     it('should return translations for a locale', async () => {
-      prismaService.client.translation.findMany.mockResolvedValue([
-        mockTranslation,
-      ]);
+      mockClient.translation.findMany.mockResolvedValue([mockTranslation]);
 
       const result = await service.findAll('ru');
 
       expect(result).toEqual([mockTranslation]);
-      expect(prismaService.client.translation.findMany).toHaveBeenCalledWith({
+      expect(mockClient.translation.findMany).toHaveBeenCalledWith({
         where: { locale: 'ru' },
         select: { key: true, value: true, namespace: true, locale: true },
         orderBy: [{ namespace: 'asc' }, { key: 'asc' }],
@@ -58,14 +61,12 @@ describe('TranslationsService', () => {
     });
 
     it('should filter by namespace when provided', async () => {
-      prismaService.client.translation.findMany.mockResolvedValue([
-        mockTranslation,
-      ]);
+      mockClient.translation.findMany.mockResolvedValue([mockTranslation]);
 
       const result = await service.findAll('ru', 'common');
 
       expect(result).toEqual([mockTranslation]);
-      expect(prismaService.client.translation.findMany).toHaveBeenCalledWith({
+      expect(mockClient.translation.findMany).toHaveBeenCalledWith({
         where: { locale: 'ru', namespace: 'common' },
         select: { key: true, value: true, namespace: true, locale: true },
         orderBy: [{ namespace: 'asc' }, { key: 'asc' }],
@@ -73,7 +74,7 @@ describe('TranslationsService', () => {
     });
 
     it('should return empty array when no translations found', async () => {
-      prismaService.client.translation.findMany.mockResolvedValue([]);
+      mockClient.translation.findMany.mockResolvedValue([]);
 
       const result = await service.findAll('fr');
 
@@ -83,14 +84,12 @@ describe('TranslationsService', () => {
 
   describe('findOne', () => {
     it('should return a single translation by composite key', async () => {
-      prismaService.client.translation.findUnique.mockResolvedValue(
-        mockTranslation,
-      );
+      mockClient.translation.findUnique.mockResolvedValue(mockTranslation);
 
       const result = await service.findOne('ru', 'common', 'hello');
 
       expect(result).toEqual(mockTranslation);
-      expect(prismaService.client.translation.findUnique).toHaveBeenCalledWith({
+      expect(mockClient.translation.findUnique).toHaveBeenCalledWith({
         where: {
           locale_namespace_key: {
             locale: 'ru',
@@ -103,7 +102,7 @@ describe('TranslationsService', () => {
     });
 
     it('should return null when translation not found', async () => {
-      prismaService.client.translation.findUnique.mockResolvedValue(null);
+      mockClient.translation.findUnique.mockResolvedValue(null);
 
       const result = await service.findOne('ru', 'common', 'nonexistent');
 

@@ -10,20 +10,27 @@ jest.mock('web-push', () => ({
   sendNotification: jest.fn(),
 }));
 
+interface MockPrismaClient {
+  pushSubscription: {
+    upsert: jest.Mock;
+    delete: jest.Mock;
+    findMany: jest.Mock;
+    deleteMany: jest.Mock;
+  };
+}
+
 describe('PushService', () => {
   let service: PushService;
-  let prismaService: { client: Record<string, any> };
+  let mockClient: MockPrismaClient;
   let configService: { get: jest.Mock };
 
   beforeEach(async () => {
-    prismaService = {
-      client: {
-        pushSubscription: {
-          upsert: jest.fn(),
-          delete: jest.fn(),
-          findMany: jest.fn(),
-          deleteMany: jest.fn(),
-        },
+    mockClient = {
+      pushSubscription: {
+        upsert: jest.fn(),
+        delete: jest.fn(),
+        findMany: jest.fn(),
+        deleteMany: jest.fn(),
       },
     };
 
@@ -41,7 +48,7 @@ describe('PushService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PushService,
-        { provide: PrismaService, useValue: prismaService },
+        { provide: PrismaService, useValue: { client: mockClient } },
         { provide: ConfigService, useValue: configService },
       ],
     }).compile();
@@ -84,7 +91,7 @@ describe('PushService', () => {
 
   describe('subscribe', () => {
     it('should upsert a valid subscription', async () => {
-      prismaService.client.pushSubscription.upsert.mockResolvedValue({});
+      mockClient.pushSubscription.upsert.mockResolvedValue({});
 
       const result = await service.subscribe({
         endpoint: 'https://push.example.com/sub/123',
@@ -92,17 +99,15 @@ describe('PushService', () => {
       });
 
       expect(result).toEqual({ success: true });
-      expect(prismaService.client.pushSubscription.upsert).toHaveBeenCalledWith(
-        {
-          where: { endpoint: 'https://push.example.com/sub/123' },
-          update: { p256dh: 'key-p256dh', auth: 'key-auth' },
-          create: {
-            endpoint: 'https://push.example.com/sub/123',
-            p256dh: 'key-p256dh',
-            auth: 'key-auth',
-          },
+      expect(mockClient.pushSubscription.upsert).toHaveBeenCalledWith({
+        where: { endpoint: 'https://push.example.com/sub/123' },
+        update: { p256dh: 'key-p256dh', auth: 'key-auth' },
+        create: {
+          endpoint: 'https://push.example.com/sub/123',
+          p256dh: 'key-p256dh',
+          auth: 'key-auth',
         },
-      );
+      });
     });
 
     it('should throw BadRequestException for invalid payload', async () => {
@@ -114,32 +119,32 @@ describe('PushService', () => {
 
   describe('unsubscribe', () => {
     it('should delete subscription by endpoint', async () => {
-      prismaService.client.pushSubscription.delete.mockResolvedValue({});
+      mockClient.pushSubscription.delete.mockResolvedValue({});
 
       const result = await service.unsubscribe(
         'https://push.example.com/sub/123',
       );
 
       expect(result).toEqual({ success: true });
-      expect(prismaService.client.pushSubscription.delete).toHaveBeenCalledWith(
-        { where: { endpoint: 'https://push.example.com/sub/123' } },
-      );
+      expect(mockClient.pushSubscription.delete).toHaveBeenCalledWith({
+        where: { endpoint: 'https://push.example.com/sub/123' },
+      });
     });
 
     it('should not throw when subscription does not exist', async () => {
-      prismaService.client.pushSubscription.delete.mockRejectedValue(
+      mockClient.pushSubscription.delete.mockRejectedValue(
         new Error('Not found'),
       );
 
-      await expect(
-        service.unsubscribe('nonexistent'),
-      ).resolves.toEqual({ success: true });
+      await expect(service.unsubscribe('nonexistent')).resolves.toEqual({
+        success: true,
+      });
     });
   });
 
   describe('broadcast', () => {
     it('should send push to all subscriptions', async () => {
-      prismaService.client.pushSubscription.findMany.mockResolvedValue([
+      mockClient.pushSubscription.findMany.mockResolvedValue([
         { id: 1, endpoint: 'https://ep1', p256dh: 'k1', auth: 'a1' },
         { id: 2, endpoint: 'https://ep2', p256dh: 'k2', auth: 'a2' },
       ]);
@@ -151,19 +156,19 @@ describe('PushService', () => {
     });
 
     it('should cleanup stale subscriptions (410 Gone)', async () => {
-      prismaService.client.pushSubscription.findMany.mockResolvedValue([
+      mockClient.pushSubscription.findMany.mockResolvedValue([
         { id: 1, endpoint: 'https://ep1', p256dh: 'k1', auth: 'a1' },
       ]);
       (webPush.sendNotification as jest.Mock).mockRejectedValue({
         statusCode: 410,
       });
-      prismaService.client.pushSubscription.deleteMany.mockResolvedValue({});
+      mockClient.pushSubscription.deleteMany.mockResolvedValue({});
 
       await service.broadcast({ title: 'Test', body: 'Hello' });
 
-      expect(
-        prismaService.client.pushSubscription.deleteMany,
-      ).toHaveBeenCalledWith({ where: { id: { in: [1] } } });
+      expect(mockClient.pushSubscription.deleteMany).toHaveBeenCalledWith({
+        where: { id: { in: [1] } },
+      });
     });
 
     it('should skip broadcast when VAPID not configured', async () => {
@@ -171,9 +176,7 @@ describe('PushService', () => {
 
       await service.broadcast({ title: 'Test', body: 'Hello' });
 
-      expect(
-        prismaService.client.pushSubscription.findMany,
-      ).not.toHaveBeenCalled();
+      expect(mockClient.pushSubscription.findMany).not.toHaveBeenCalled();
     });
   });
 });

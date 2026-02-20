@@ -1,52 +1,52 @@
-'use client';
+'use client'
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, startTransition } from 'react'
 import {
   isPushSupported,
   subscribeToPush,
   unsubscribeFromPush,
   getCurrentSubscription,
-} from '@/shared/lib/push/push-subscription';
+} from '@/shared/lib/push/push-subscription'
 
-type PushState = 'loading' | 'unsupported' | 'default' | 'subscribed' | 'denied';
+type PushState = 'loading' | 'unsupported' | 'default' | 'subscribed' | 'denied'
 
 export function usePushNotifications() {
-  const [state, setState] = useState<PushState>('loading');
+  const [state, setState] = useState<PushState>('loading')
 
   useEffect(() => {
     if (!isPushSupported()) {
-      setState('unsupported');
-      return;
+      startTransition(() => setState('unsupported'))
+      return
     }
 
     if (Notification.permission === 'denied') {
-      setState('denied');
-      return;
+      startTransition(() => setState('denied'))
+      return
     }
 
     getCurrentSubscription().then((sub) => {
-      setState(sub ? 'subscribed' : 'default');
-    });
-  }, []);
+      setState(sub ? 'subscribed' : 'default')
+    })
+  }, [])
 
   const subscribe = useCallback(async () => {
     try {
-      const sub = await subscribeToPush();
-      setState(sub ? 'subscribed' : 'denied');
+      const sub = await subscribeToPush()
+      setState(sub ? 'subscribed' : 'denied')
     } catch (err) {
-      console.error('[Push] subscribe error:', err);
-      setState('default');
+      console.error('[Push] subscribe error:', err)
+      setState('default')
     }
-  }, []);
+  }, [])
 
   const unsubscribe = useCallback(async () => {
     try {
-      await unsubscribeFromPush();
-      setState('default');
+      await unsubscribeFromPush()
+      setState('default')
     } catch (err) {
-      console.error('[Push] unsubscribe error:', err);
+      console.error('[Push] unsubscribe error:', err)
     }
-  }, []);
+  }, [])
 
-  return { state, subscribe, unsubscribe };
+  return { state, subscribe, unsubscribe }
 }

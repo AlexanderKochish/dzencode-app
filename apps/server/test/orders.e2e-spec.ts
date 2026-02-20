@@ -1,10 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { OrdersResolver } from '@/orders/orders.resolver';
 import { OrdersService } from '@/orders/orders.service';
+import { Server } from 'http';
+
+interface GraphQLBody {
+  data: {
+    orders: {
+      items: Array<{
+        id: number;
+        title: string;
+        description: string | null;
+        total: Array<{ symbol: string; value: number }>;
+      }>;
+      totalCount: number;
+    };
+    removeOrder: { id: number; title: string };
+  };
+}
 
 describe('Orders GraphQL (e2e)', () => {
   let app: INestApplication;
@@ -94,17 +110,17 @@ describe('Orders GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query })
         .expect(200);
 
-      const { data } = response.body;
-      expect(data.orders.items).toHaveLength(1);
-      expect(data.orders.items[0].id).toBe(1);
-      expect(data.orders.items[0].title).toBe('Order #1');
-      expect(data.orders.totalCount).toBe(1);
-      expect(data.orders.items[0].total).toEqual(
+      const body = response.body as GraphQLBody;
+      expect(body.data.orders.items).toHaveLength(1);
+      expect(body.data.orders.items[0].id).toBe(1);
+      expect(body.data.orders.items[0].title).toBe('Order #1');
+      expect(body.data.orders.totalCount).toBe(1);
+      expect(body.data.orders.items[0].total).toEqual(
         expect.arrayContaining([
           { symbol: 'USD', value: 100 },
           { symbol: 'UAH', value: 4000 },
@@ -127,13 +143,14 @@ describe('Orders GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query })
         .expect(200);
 
-      expect(response.body.data.orders.items).toEqual([]);
-      expect(response.body.data.orders.totalCount).toBe(0);
+      const body = response.body as GraphQLBody;
+      expect(body.data.orders.items).toEqual([]);
+      expect(body.data.orders.totalCount).toBe(0);
     });
   });
 
@@ -153,13 +170,14 @@ describe('Orders GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query: mutation })
         .expect(200);
 
-      expect(response.body.data.removeOrder.id).toBe(1);
-      expect(response.body.data.removeOrder.title).toBe('Order #1');
+      const body = response.body as GraphQLBody;
+      expect(body.data.removeOrder.id).toBe(1);
+      expect(body.data.removeOrder.title).toBe('Order #1');
       expect(ordersService.remove).toHaveBeenCalledWith(1);
     });
   });

@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { HealthController } from '@/health/health.controller';
+import { Server } from 'http';
 
 describe('HealthController (e2e)', () => {
   let app: INestApplication;
@@ -19,8 +20,8 @@ describe('HealthController (e2e)', () => {
     await app.close();
   });
 
-  it('GET /health should return 200 with status ok', () => {
-    return request(app.getHttpServer())
+  it('GET /health should return 200 with status ok', async () => {
+    await request(app.getHttpServer() as Server)
       .get('/health')
       .expect(200)
       .expect({ status: 'ok' });

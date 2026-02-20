@@ -1,10 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ProductsResolver } from '@/products/products.resolver';
 import { ProductsService } from '@/products/products.service';
+import { Server } from 'http';
+
+interface GraphQLBody {
+  data: {
+    products: {
+      items: Array<{
+        id: number;
+        title: string;
+        type: string;
+        specification: string;
+      }>;
+      totalCount: number;
+    };
+    productTypes: string[];
+    productSpecs: string[];
+    removeProduct: { id: number; title: string };
+  };
+}
 
 describe('Products GraphQL (e2e)', () => {
   let app: INestApplication;
@@ -85,15 +103,15 @@ describe('Products GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query })
         .expect(200);
 
-      const { data } = response.body;
-      expect(data.products.items).toHaveLength(1);
-      expect(data.products.items[0].title).toBe('Monitor LG');
-      expect(data.products.totalCount).toBe(1);
+      const body = response.body as GraphQLBody;
+      expect(body.data.products.items).toHaveLength(1);
+      expect(body.data.products.items[0].title).toBe('Monitor LG');
+      expect(body.data.products.totalCount).toBe(1);
     });
 
     it('should accept type and spec filters', async () => {
@@ -111,7 +129,7 @@ describe('Products GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query })
         .expect(200);
@@ -139,16 +157,13 @@ describe('Products GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query })
         .expect(200);
 
-      expect(response.body.data.productTypes).toEqual([
-        'Monitor',
-        'Mouse',
-        'Keyboard',
-      ]);
+      const body = response.body as GraphQLBody;
+      expect(body.data.productTypes).toEqual(['Monitor', 'Mouse', 'Keyboard']);
     });
   });
 
@@ -162,12 +177,13 @@ describe('Products GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query })
         .expect(200);
 
-      expect(response.body.data.productSpecs).toEqual(['Full HD', '4K']);
+      const body = response.body as GraphQLBody;
+      expect(body.data.productSpecs).toEqual(['Full HD', '4K']);
     });
   });
 
@@ -184,13 +200,14 @@ describe('Products GraphQL (e2e)', () => {
         }
       `;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/graphql')
         .send({ query: mutation })
         .expect(200);
 
-      expect(response.body.data.removeProduct.id).toBe(1);
-      expect(response.body.data.removeProduct.title).toBe('Monitor LG');
+      const body = response.body as GraphQLBody;
+      expect(body.data.removeProduct.id).toBe(1);
+      expect(body.data.removeProduct.title).toBe('Monitor LG');
       expect(productsService.remove).toHaveBeenCalledWith(1);
     });
   });

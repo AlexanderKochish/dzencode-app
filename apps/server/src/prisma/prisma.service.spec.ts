@@ -35,14 +35,16 @@ describe('PrismaService', () => {
   describe('onModuleInit', () => {
     it('should call $connect on the client', async () => {
       await service.onModuleInit();
-      expect(service.client.$connect).toHaveBeenCalledTimes(1);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(jest.mocked(service.client.$connect)).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('onModuleDestroy', () => {
     it('should call $disconnect on the client', async () => {
       await service.onModuleDestroy();
-      expect(service.client.$disconnect).toHaveBeenCalledTimes(1);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(jest.mocked(service.client.$disconnect)).toHaveBeenCalledTimes(1);
     });
   });
 });

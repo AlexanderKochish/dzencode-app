@@ -37,21 +37,19 @@ describe('TranslationsResolver', () => {
   });
 
   describe('findAll', () => {
-    it('should return translations for a locale', () => {
+    it('should return translations for a locale', async () => {
       translationsService.findAll.mockResolvedValue([mockTranslation]);
 
-      const result = resolver.findAll('ru');
+      const result = await resolver.findAll('ru');
 
-      expect(translationsService.findAll).toHaveBeenCalledWith(
-        'ru',
-        undefined,
-      );
+      expect(result).toEqual([mockTranslation]);
+      expect(translationsService.findAll).toHaveBeenCalledWith('ru', undefined);
     });
 
-    it('should pass namespace filter', () => {
+    it('should pass namespace filter', async () => {
       translationsService.findAll.mockResolvedValue([mockTranslation]);
 
-      resolver.findAll('ru', 'common');
+      await resolver.findAll('ru', 'common');
 
       expect(translationsService.findAll).toHaveBeenCalledWith('ru', 'common');
     });

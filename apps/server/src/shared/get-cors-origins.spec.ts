@@ -18,9 +18,7 @@ describe('getCorsOrigins', () => {
       const result = getCorsOrigins();
 
       expect(result).toBeInstanceOf(RegExp);
-      expect(result).toEqual(
-        /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
-      );
+      expect(result).toEqual(/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/);
     });
 
     it('should match localhost with port', () => {
@@ -64,7 +62,8 @@ describe('getCorsOrigins', () => {
 
     it('should handle multiple comma-separated URLs', () => {
       process.env.NODE_ENV = 'production';
-      process.env.BASE_URL = 'https://app.example.com, https://admin.example.com';
+      process.env.BASE_URL =
+        'https://app.example.com, https://admin.example.com';
 
       const result = getCorsOrigins();
 

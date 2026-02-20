@@ -1,0 +1,37 @@
+@use '@/app/styles/variables' as *;
+
+.pushButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid $border-color;
+  border-radius: 20px;
+  background: white;
+  font-size: 13px;
+  color: $text-dark;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    border-color: $primary-green;
+    color: $primary-green;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.active {
+  background: rgba($primary-green, 0.08);
+  border-color: $primary-green;
+  color: $primary-green;
+}
+
+.icon {
+  font-size: 16px;
+  line-height: 1;
+}

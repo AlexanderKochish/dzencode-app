@@ -43,20 +43,19 @@ describe('EventsGateway', () => {
 
   describe('handleConnection', () => {
     it('should update active tabs count in Redis and emit to all clients', async () => {
+      const broadcastEmit = jest.fn();
+      const clientEmit = jest.fn();
       const mockClient = {
-        broadcast: { emit: jest.fn() },
-        emit: jest.fn(),
+        broadcast: { emit: broadcastEmit },
+        emit: clientEmit,
       } as unknown as Socket;
 
       await gateway.handleConnection(mockClient);
 
       expect(mockServer.fetchSockets).toHaveBeenCalledTimes(1);
       expect(redisService.set).toHaveBeenCalledWith('stats:active_tabs', 3);
-      expect(mockClient.broadcast.emit).toHaveBeenCalledWith(
-        'updateActiveTabs',
-        3,
-      );
-      expect(mockClient.emit).toHaveBeenCalledWith('updateActiveTabs', 3);
+      expect(broadcastEmit).toHaveBeenCalledWith('updateActiveTabs', 3);
+      expect(clientEmit).toHaveBeenCalledWith('updateActiveTabs', 3);
     });
   });
 
@@ -74,16 +73,15 @@ describe('EventsGateway', () => {
 
   describe('handleGetActiveTabs', () => {
     it('should emit current active tabs count to the requesting client', async () => {
-      const mockClient = {
-        emit: jest.fn(),
-      } as unknown as Socket;
+      const clientEmit = jest.fn();
+      const mockClient = { emit: clientEmit } as unknown as Socket;
 
       mockServer.fetchSockets.mockResolvedValue([{}, {}, {}, {}]);
 
       await gateway.handleGetActiveTabs(mockClient);
 
       expect(mockServer.fetchSockets).toHaveBeenCalledTimes(1);
-      expect(mockClient.emit).toHaveBeenCalledWith('updateActiveTabs', 4);
+      expect(clientEmit).toHaveBeenCalledWith('updateActiveTabs', 4);
     });
   });
 

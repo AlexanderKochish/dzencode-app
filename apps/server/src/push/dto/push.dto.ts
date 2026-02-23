@@ -25,10 +25,11 @@ export class PushSubscriptionDto {
   @IsOptional()
   expirationTime?: number | null;
 
+  @IsOptional()
   @IsObject()
   @ValidateNested()
   @Type(() => PushKeysDto)
-  keys!: PushKeysDto;
+  keys?: PushKeysDto;
 }
 
 export class PushPayloadDto {

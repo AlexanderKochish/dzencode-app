@@ -1,3 +1,5 @@
+import { Loader } from '@/shared/ui/loader/loader'
+
 export default function ProductsLoading() {
-  return <div>Загрузка...</div>
+  return <Loader text="Загрузка..." />
 }

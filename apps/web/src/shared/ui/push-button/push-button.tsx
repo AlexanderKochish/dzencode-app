@@ -1,20 +1,33 @@
-'use client';
+'use client'
 
-import { usePushNotifications } from '@/shared/hooks/use-push-notifications';
-import styles from './push-button.module.scss';
+import { usePushNotifications } from '@/shared/hooks/use-push-notifications'
+import styles from './push-button.module.scss'
 
 export const PushButton = () => {
-  const { state, subscribe, unsubscribe } = usePushNotifications();
+  const { state, subscribe, unsubscribe } = usePushNotifications()
 
-  if (state === 'unsupported' || state === 'loading') return null;
+  if (state === 'unsupported' || state === 'loading') return null
+
+  if (state === 'processing') {
+    return (
+      <button className={styles.pushButton} disabled>
+        <span className={styles.icon}>⏳</span>
+        <span>Загрузка...</span>
+      </button>
+    )
+  }
 
   if (state === 'denied') {
     return (
-      <button className={styles.pushButton} disabled title="Уведомления заблокированы в настройках браузера">
+      <button
+        className={styles.pushButton}
+        disabled
+        title="Уведомления заблокированы в настройках браузера"
+      >
         <span className={styles.icon}>🔕</span>
         <span>Заблокировано</span>
       </button>
-    );
+    )
   }
 
   if (state === 'subscribed') {
@@ -27,7 +40,7 @@ export const PushButton = () => {
         <span className={styles.icon}>🔔</span>
         <span>Уведомления вкл.</span>
       </button>
-    );
+    )
   }
 
   return (
@@ -39,5 +52,5 @@ export const PushButton = () => {
       <span className={styles.icon}>🔕</span>
       <span>Уведомления</span>
     </button>
-  );
-};
+  )
+}

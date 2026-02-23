@@ -3,12 +3,10 @@ RUN apk add --no-cache libc6-compat
 RUN npm install -g turbo
 WORKDIR /app
 
-# --- Prune stage ---
 FROM base AS pruner
 COPY . .
 RUN turbo prune @dzencode/web @dzencode/server --docker
 
-# --- Build stage ---
 FROM base AS builder
 WORKDIR /app
 
@@ -19,13 +17,14 @@ RUN npm install
 COPY --from=pruner /app/out/full/ .
 COPY .gitignore .gitignore
 
-# Dummy DATABASE_URL for prisma generate (doesn't connect, just generates client)
+
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy?schema=public"
+
+RUN npm install --no-save @rollup/rollup-linux-x64-musl
 
 RUN npx turbo run generate
 RUN npx turbo run build
 
-# --- Runner stage ---
 FROM base AS runner
 WORKDIR /app
 

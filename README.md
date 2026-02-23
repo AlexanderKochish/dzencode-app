@@ -63,7 +63,7 @@ NODE_ENV=development
 **3. Запусти:**
 
 ```bash
-docker compose up --watch
+docker compose up --build --watch
 ```
 
 При первом запуске API-контейнер автоматически:

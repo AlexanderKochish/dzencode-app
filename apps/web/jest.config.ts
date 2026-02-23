@@ -1,11 +1,5 @@
 import type { Config } from 'jest'
 import nextJest from 'next/jest.js'
-import { createRequire } from 'module'
-
-const resolve =
-  typeof require !== 'undefined'
-    ? require.resolve
-    : createRequire(import.meta.url).resolve
 
 const createJestConfig = nextJest({
   dir: './',
@@ -13,7 +7,7 @@ const createJestConfig = nextJest({
 
 const config: Config = {
   coverageProvider: 'v8',
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: 'jsdom',
 
   testEnvironmentOptions: {
     customExportConditions: [''],
@@ -27,16 +21,9 @@ const config: Config = {
 
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^react$': resolve('react'),
-    '^react-dom$': resolve('react-dom'),
   },
 
-  testMatch: [
-    '**/__tests__/**/*.test.ts',
-    '**/__tests__/**/*.test.tsx',
-    '**/src/**/*.test.ts',
-    '**/src/**/*.test.tsx',
-  ],
+  testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
 
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

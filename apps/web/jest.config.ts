@@ -27,7 +27,6 @@ const config: Config = {
 
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    // Используем нашу безопасную функцию resolve
     '^react$': resolve('react'),
     '^react-dom$': resolve('react-dom'),
   },

@@ -13,6 +13,7 @@ import { useProductSocket } from '../../hooks/use-product-socket'
 import { useEffect } from 'react'
 import { useTranslations } from '@/shared/i18n/i18n-context'
 import { TruncatedText } from '@/shared/ui/truncated-text/truncated-text'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface Props {
   initialProducts: Product[]
@@ -22,7 +23,13 @@ interface Props {
   allSpecs: string[]
 }
 
-const ProductsPageClient = ({ initialProducts, pageSize, totalCount, allTypes, allSpecs }: Props) => {
+const ProductsPageClient = ({
+  initialProducts,
+  pageSize,
+  totalCount,
+  allTypes,
+  allSpecs,
+}: Props) => {
   useProductSocket()
   const dispatch = useAppDispatch()
   const t = useTranslations('products')
@@ -38,7 +45,9 @@ const ProductsPageClient = ({ initialProducts, pageSize, totalCount, allTypes, a
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
-        <h1>{t('title')} / {totalCount}</h1>
+        <h1>
+          {t('title')} / {totalCount}
+        </h1>
 
         <div className={styles.filters}>
           <div className={styles.filterGroup}>
@@ -46,11 +55,18 @@ const ProductsPageClient = ({ initialProducts, pageSize, totalCount, allTypes, a
             <select
               className={styles.filterSelect}
               value={currentType}
-              onChange={(e) => updateQuery({ type: e.target.value || null, spec: currentSpec || null })}
+              onChange={(e) =>
+                updateQuery({
+                  type: e.target.value || null,
+                  spec: currentSpec || null,
+                })
+              }
             >
               <option value="">{t('all')}</option>
               {allTypes.map((type) => (
-                <option key={type} value={type}>{type}</option>
+                <option key={type} value={type}>
+                  {type}
+                </option>
               ))}
             </select>
           </div>
@@ -60,11 +76,18 @@ const ProductsPageClient = ({ initialProducts, pageSize, totalCount, allTypes, a
             <select
               className={styles.filterSelect}
               value={currentSpec}
-              onChange={(e) => updateQuery({ spec: e.target.value || null, type: currentType || null })}
+              onChange={(e) =>
+                updateQuery({
+                  spec: e.target.value || null,
+                  type: currentType || null,
+                })
+              }
             >
               <option value="">{t('all')}</option>
               {allSpecs.map((spec) => (
-                <option key={spec} value={spec}>{spec}</option>
+                <option key={spec} value={spec}>
+                  {spec}
+                </option>
               ))}
             </select>
           </div>
@@ -73,67 +96,103 @@ const ProductsPageClient = ({ initialProducts, pageSize, totalCount, allTypes, a
 
       <div className={styles.tableWrapper}>
         <div className={styles.list}>
-          {initialProducts.map((product) => (
-            <div key={product.id} className={styles.row}>
-              <div className={styles.statusDot}>
-                <span className={`${styles.dot} ${product.isNew ? styles.dotGreen : styles.dotGray}`} />
-              </div>
-
-              <div className={styles.photo}>
-                <Image
-                  src={product.photo || '/monitor.jpg'}
-                  alt={product.title}
-                  width={44}
-                  height={44}
-                  style={{ objectFit: 'contain' }}
-                />
-              </div>
-
-              <div className={styles.nameInfo}>
-                <TruncatedText text={product.title} maxLength={30} className={styles.productTitle} />
-                <span className={styles.sn}>SN-{product.serialNumber}</span>
-              </div>
-
-              <div className={`${styles.statusText} ${product.isNew ? styles.statusFree : styles.statusBusy}`}>
-                {product.isNew ? t('free') : t('in_repair')}
-              </div>
-
-              <div className={styles.guarantee}>
-                <span>{t('guarantee_from')} {formatDateShort(product.guarantee.start)}</span>
-                <span>{t('guarantee_to')} {formatDateShort(product.guarantee.end)}</span>
-              </div>
-
-              <div className={styles.condition}>
-                {product.isNew ? t('new') : t('used')}
-              </div>
-
-              <div className={styles.price}>
-                {product.price.map((p) => (
-                  <div key={p.symbol} className={p.symbol === 'USD' ? styles.priceUsd : styles.priceUah}>
-                    {p.value.toLocaleString('ru-RU')} {p.symbol === 'USD' ? '$' : 'UAH'}
-                  </div>
-                ))}
-              </div>
-
-              <div className={styles.groupName}>
-                <TruncatedText text="Длинное предлинное название группы" maxLength={20} />
-              </div>
-
-              <div className={styles.orderName}>
-                <TruncatedText text={product.order?.title ?? '—'} maxLength={25} />
-              </div>
-
-              <div className={styles.date}>{formatDateShort(product.date)}</div>
-
-              <button
-                className={styles.deleteBtn}
-                onClick={() => dispatch(selectProduct(product.id))}
-                aria-label={t('delete_btn')}
+          <AnimatePresence>
+            {initialProducts.map((product) => (
+              <motion.div
+                key={product.id}
+                className={styles.row}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: -80 }}
+                transition={{ duration: 0.22 }}
               >
-                🗑
-              </button>
-            </div>
-          ))}
+                <div className={styles.statusDot}>
+                  <span
+                    className={`${styles.dot} ${product.isNew ? styles.dotGreen : styles.dotGray}`}
+                  />
+                </div>
+
+                <div className={styles.photo}>
+                  <Image
+                    src={product.photo || '/monitor.jpg'}
+                    alt={product.title}
+                    width={44}
+                    height={44}
+                    style={{ objectFit: 'contain' }}
+                  />
+                </div>
+
+                <div className={styles.nameInfo}>
+                  <TruncatedText
+                    text={product.title}
+                    maxLength={30}
+                    className={styles.productTitle}
+                  />
+                  <span className={styles.sn}>SN-{product.serialNumber}</span>
+                </div>
+
+                <div
+                  className={`${styles.statusText} ${product.isNew ? styles.statusFree : styles.statusBusy}`}
+                >
+                  {product.isNew ? t('free') : t('in_repair')}
+                </div>
+
+                <div className={styles.guarantee}>
+                  <span>
+                    {t('guarantee_from')}{' '}
+                    {formatDateShort(product.guarantee.start)}
+                  </span>
+                  <span>
+                    {t('guarantee_to')} {formatDateShort(product.guarantee.end)}
+                  </span>
+                </div>
+
+                <div className={styles.condition}>
+                  {product.isNew ? t('new') : t('used')}
+                </div>
+
+                <div className={styles.price}>
+                  {product.price.map((p) => (
+                    <div
+                      key={p.symbol}
+                      className={
+                        p.symbol === 'USD' ? styles.priceUsd : styles.priceUah
+                      }
+                    >
+                      {p.value.toLocaleString('ru-RU')}{' '}
+                      {p.symbol === 'USD' ? '$' : 'UAH'}
+                    </div>
+                  ))}
+                </div>
+
+                <div className={styles.groupName}>
+                  <TruncatedText
+                    text="Длинное предлинное название группы"
+                    maxLength={20}
+                  />
+                </div>
+
+                <div className={styles.orderName}>
+                  <TruncatedText
+                    text={product.order?.title ?? '—'}
+                    maxLength={25}
+                  />
+                </div>
+
+                <div className={styles.date}>
+                  {formatDateShort(product.date)}
+                </div>
+
+                <button
+                  className={styles.deleteBtn}
+                  onClick={() => dispatch(selectProduct(product.id))}
+                  aria-label={t('delete_btn')}
+                >
+                  🗑
+                </button>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
 

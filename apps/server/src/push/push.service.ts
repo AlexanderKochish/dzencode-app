@@ -7,25 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import * as webPush from 'web-push';
-
-interface PushPayload {
-  title: string;
-  body: string;
-  icon?: string;
-  badge?: string;
-  url?: string;
-  tag?: string;
-}
-
-interface SubscriptionKeys {
-  p256dh: string;
-  auth: string;
-}
-
-interface SubscribeDto {
-  endpoint: string;
-  keys: SubscriptionKeys;
-}
+import { PushPayloadDto, PushSubscriptionDto } from './dto/push.dto';
 
 @Injectable()
 export class PushService implements OnModuleInit {
@@ -57,7 +39,7 @@ export class PushService implements OnModuleInit {
     return this.config.get<string>('vapid.publicKey') ?? '';
   }
 
-  async subscribe(dto: SubscribeDto) {
+  async subscribe(dto: PushSubscriptionDto) {
     if (!dto.endpoint || !dto.keys?.p256dh || !dto.keys?.auth) {
       throw new BadRequestException('Invalid push subscription payload');
     }
@@ -85,7 +67,7 @@ export class PushService implements OnModuleInit {
     return { success: true };
   }
 
-  async broadcast(payload: PushPayload) {
+  async broadcast(payload: PushPayloadDto) {
     const publicKey = this.config.get<string>('vapid.publicKey');
     if (!publicKey) return;
 
@@ -107,7 +89,6 @@ export class PushService implements OnModuleInit {
         } catch (err: unknown) {
           const statusCode = (err as { statusCode?: number }).statusCode;
 
-          // 404 or 410 → subscription expired/invalid
           if (statusCode === 404 || statusCode === 410) {
             staleIds.push(sub.id);
           } else {
@@ -119,7 +100,6 @@ export class PushService implements OnModuleInit {
       }),
     );
 
-    // Cleanup stale subscriptions
     if (staleIds.length > 0) {
       await this.prisma.client.pushSubscription.deleteMany({
         where: { id: { in: staleIds } },

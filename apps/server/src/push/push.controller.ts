@@ -1,14 +1,6 @@
 import { Controller, Post, Delete, Get, Body } from '@nestjs/common';
 import { PushService } from './push.service';
-
-class SubscribeBody {
-  endpoint!: string;
-  keys!: { p256dh: string; auth: string };
-}
-
-class UnsubscribeBody {
-  endpoint!: string;
-}
+import { PushSubscriptionDto } from './dto/push.dto';
 
 @Controller('push')
 export class PushController {
@@ -20,12 +12,12 @@ export class PushController {
   }
 
   @Post('subscribe')
-  subscribe(@Body() body: SubscribeBody) {
+  subscribe(@Body() body: PushSubscriptionDto) {
     return this.pushService.subscribe(body);
   }
 
   @Delete('unsubscribe')
-  unsubscribe(@Body() body: UnsubscribeBody) {
+  unsubscribe(@Body() body: PushSubscriptionDto) {
     return this.pushService.unsubscribe(body.endpoint);
   }
 }

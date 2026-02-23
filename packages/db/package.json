@@ -13,13 +13,13 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "latest"
+    "@prisma/client": "^6.7.0"
   },
   "devDependencies": {
     "@dzencode/tsconfig": "*",
     "@types/node": "^22.19.11",
-    "prisma": "latest",
-    "tsx": "^4.21.0",
-    "tsup": "latest"
+    "prisma": "^6.7.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0"
   }
 }

@@ -14,7 +14,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["DATABASE_URL", "REDIS_URL"]
+      "dependsOn": ["^generate"]
     },
     "generate": {
       "cache": false,

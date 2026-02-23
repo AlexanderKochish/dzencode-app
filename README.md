@@ -63,10 +63,11 @@ NODE_ENV=development
 **3. Запусти:**
 
 ```bash
-docker compose up --build
+docker compose up --watch
 ```
 
 При первом запуске API-контейнер автоматически:
+
 - Применит Prisma-миграции
 - Засеет базу 100 заказами и ~200 товарами
 - Запустит NestJS в режиме `--watch`
@@ -75,9 +76,9 @@ docker compose up --build
 
 | Сервис | URL |
 |--------|-----|
-| 🌐 Фронтенд | http://localhost:3000 |
-| 🔌 GraphQL Playground | http://localhost:3001/graphql |
-| 🔍 Prisma Studio | http://localhost:5555 |
+| 🌐 Фронтенд | <http://localhost:3000> |
+| 🔌 GraphQL Playground | <http://localhost:3001/graphql> |
+| 🔍 Prisma Studio | <http://localhost:5555> |
 
 ---
 
@@ -175,12 +176,14 @@ npx prisma db seed
 ### 📋 Страница заказов (`/orders`)
 
 **Что умеет:**
+
 - Список всех заказов с пагинацией (серверная, через URL `?page=N`)
 - Для каждого заказа отображается: название, количество товаров, дата, общая стоимость в **USD** и **UAH**
 - Удаление заказа через модальное окно с подтверждением
 - Анимации появления/исчезновения элементов через **Framer Motion**
 
 **Как работает:**
+
 - Данные загружаются на сервере (Next.js Server Component) через GraphQL-запрос `GetOrders`
 - Сумма заказа считается на бэкенде в `OrdersResolver.total()` — агрегируется из цен всех товаров заказа
 - Удаление — GraphQL мутация `RemoveOrder`, после которой Redux обновляет состояние
@@ -190,12 +193,14 @@ npx prisma db seed
 ### 🛒 Страница товаров (`/products`)
 
 **Что умеет:**
+
 - Список товаров с пагинацией
 - Фильтрация по **типу** товара (Monitors, Laptops, Keyboards, Mice, Tablets) через URL-параметр `?type=`
 - Для каждого товара: фото, название, серийный номер, статус (`Свободен` / `В ремонте`), гарантия, состояние (`Новый` / `Б/У`), цена в USD и UAH
 - Удаление товара через модальное окно
 
 **Как работает:**
+
 - Данные + список всех типов загружаются одним запросом `GetProducts` (возвращает `items`, `totalCount`, `productTypes`)
 - Фильтрация по типу передаётся в GraphQL-аргумент `type` и обрабатывается на бэкенде через Prisma `where: { type }`
 - Пагинация — через `limit` / `offset` аргументы GraphQL
@@ -205,6 +210,7 @@ npx prisma db seed
 ### ⚡ Реалтайм через WebSockets
 
 **Что умеет:**
+
 - После удаления товара — **все открытые вкладки** автоматически обновляют список без перезагрузки страницы
 - Счётчик активных вкладок в шапке (`ActiveTabsCounter`) — показывает сколько браузерных вкладок сейчас открыто с приложением
 
@@ -357,6 +363,7 @@ Product
 ## 🐛 Отладка
 
 **Логи контейнеров:**
+
 ```bash
 docker compose logs -f api   # NestJS логи
 docker compose logs -f web   # Next.js логи
@@ -364,17 +371,20 @@ docker compose logs -f db    # PostgreSQL логи
 ```
 
 **Перезапуск отдельного сервиса:**
+
 ```bash
 docker compose restart api
 ```
 
 **Сброс базы и повторный seed:**
+
 ```bash
 docker compose down -v       # удалить контейнеры и volume с данными
 docker compose up --build    # поднять заново (seed запустится автоматически)
 ```
 
 **Подключение к PostgreSQL напрямую:**
+
 ```bash
 docker exec -it dzencode_db psql -U user -d inventory_db
 ```

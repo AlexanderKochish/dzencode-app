@@ -8,7 +8,13 @@ import {
   getCurrentSubscription,
 } from '@/shared/lib/push/push-subscription'
 
-type PushState = 'loading' | 'unsupported' | 'default' | 'subscribed' | 'denied'
+type PushState =
+  | 'loading'
+  | 'unsupported'
+  | 'default'
+  | 'subscribed'
+  | 'denied'
+  | 'processing'
 
 export function usePushNotifications() {
   const [state, setState] = useState<PushState>('loading')
@@ -30,21 +36,25 @@ export function usePushNotifications() {
   }, [])
 
   const subscribe = useCallback(async () => {
+    setState('processing')
     try {
       const sub = await subscribeToPush()
       setState(sub ? 'subscribed' : 'denied')
     } catch (err) {
-      console.error('[Push] subscribe error:', err)
+      console.error('Push Ошибка подписки:', err)
+      alert('Ошибка подписки на пуши. Открой консоль разработчика (F12).')
       setState('default')
     }
   }, [])
 
   const unsubscribe = useCallback(async () => {
+    setState('processing')
     try {
       await unsubscribeFromPush()
       setState('default')
     } catch (err) {
-      console.error('[Push] unsubscribe error:', err)
+      console.error('Push Ошибка отписки:', err)
+      setState('subscribed')
     }
   }, [])
 

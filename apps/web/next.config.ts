@@ -12,7 +12,17 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
+  transpilePackages: ['@dzencode/db'],
   turbopack: {},
+
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      config.watchOptions = {
+        ignored: /node_modules/,
+      }
+    }
+    return config
+  },
 
   images: {
     unoptimized: process.env.NODE_ENV === 'development',

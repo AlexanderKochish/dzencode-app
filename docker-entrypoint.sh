@@ -10,6 +10,9 @@ if [ "$NODE_ENV" != "production" ]; then
     npm install
   fi
 
+  echo "🔧 Forcing Rollup Linux musl binary installation..."
+  npm install --no-save @rollup/rollup-linux-x64-musl
+
   # Clear turbo cache and stale .next to avoid disk/cache issues
   echo "🧹 Clearing caches..."
   rm -rf /app/.turbo /app/node_modules/.cache/turbo /app/packages/db/.turbo

@@ -2,7 +2,10 @@ import type { Config } from 'jest'
 import nextJest from 'next/jest.js'
 import { createRequire } from 'module'
 
-const require = createRequire(import.meta.url)
+const resolve =
+  typeof require !== 'undefined'
+    ? require.resolve
+    : createRequire(import.meta.url).resolve
 
 const createJestConfig = nextJest({
   dir: './',
@@ -24,8 +27,9 @@ const config: Config = {
 
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^react$': require.resolve('react'),
-    '^react-dom$': require.resolve('react-dom'),
+    // Используем нашу безопасную функцию resolve
+    '^react$': resolve('react'),
+    '^react-dom$': resolve('react-dom'),
   },
 
   testMatch: [

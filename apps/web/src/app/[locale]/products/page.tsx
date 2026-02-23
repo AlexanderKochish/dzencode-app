@@ -5,6 +5,7 @@ import { GetProductsData } from '@/entities/product/model/types'
 import { getClientAction } from '@/shared/api/actions'
 import { DEFAULT_ITEMS_LIMIT } from '@/shared/consts/consts'
 import { getPaginationParams } from '@/shared/lib/pagination/get-pagination-params'
+import { Loader } from '@/shared/ui/loader/loader'
 
 interface Props {
   searchParams: Promise<{ page?: string; type?: string; spec?: string }>
@@ -20,13 +21,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   })
 
   if (error) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', gap: 16 }}>
-        <meta httpEquiv="refresh" content="3" />
-        <div className="spinner-border text-secondary" role="status" />
-        <p style={{ color: '#888', margin: 0 }}>Подключение к серверу...</p>
-      </div>
-    )
+    return <Loader text="Подключение к серверу..." />
   }
 
   if (!data?.products?.items.length) {

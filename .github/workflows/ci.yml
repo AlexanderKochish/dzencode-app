@@ -31,8 +31,10 @@ jobs:
       - name: Run Tests
         run: npm run test
 
-      - name: Test Build (Next.js & NestJS)
+      - name: Fix NPM Linux Bug for Rollup
+        run: npm install --no-save @rollup/rollup-linux-x64-gnu
 
+      - name: Test Build (Next.js & NestJS)
         run: npm run build
         env:
           NODE_ENV: production

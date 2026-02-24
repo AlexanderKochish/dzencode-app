@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from '@/shared/i18n/i18n-context'
 import { PageError } from '@/shared/ui/error-page/error-page'
 
 export default function OrdersError({
@@ -9,7 +10,6 @@ export default function OrdersError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
-  return (
-    <PageError error={error} reset={reset} title="Ошибка загрузки заказов" />
-  )
+  const t = useTranslations('orders')
+  return <PageError error={error} reset={reset} title={t('error_title')} />
 }

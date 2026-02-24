@@ -4,8 +4,10 @@ import styles from './top-menu.module.scss'
 import { CurrentTime } from './current-time'
 import { ActiveTabsCounter } from '@/shared/ui/active-tabs-counter/active-tabs-counter'
 import { PushButton } from '@/shared/ui/push-button/push-button'
+import { useTranslations } from '@/shared/i18n/i18n-context'
 
 export const TopMenu = () => {
+  const t = useTranslations('common')
   return (
     <header className={styles.topMenu}>
       <div className={styles.logoBlock}>
@@ -14,7 +16,7 @@ export const TopMenu = () => {
       </div>
 
       <div className={styles.searchBlock}>
-        <input type="text" placeholder="Поиск" className="form-control" />
+        <input type="text" placeholder={t('search')} className="form-control" />
       </div>
 
       <div className={styles.infoBlock}>

@@ -14,6 +14,8 @@ import { useState, useEffect } from 'react'
 import { useOrderSocket } from '@/entities/order/hooks/use-order-socket'
 import { useTranslations } from '@/shared/i18n/i18n-context'
 import { TruncatedText } from '@/shared/ui/truncated-text/truncated-text'
+import { EmptyState } from '@/shared/ui/empty-state/empty-state'
+import { TrashIcon } from '@/shared/ui/icons/trash-icon'
 
 interface Props {
   initialOrders: Order[]
@@ -45,7 +47,13 @@ export default function OrdersPageClient({
   return (
     <div className={styles.pageContainer}>
       <div className={styles.header}>
-        <button className={styles.plusBtn}>+</button>
+        <button
+          className={styles.plusBtn}
+          title={t('add')}
+          aria-label={t('add')}
+        >
+          +
+        </button>
         <h1>
           {t('title')} / {totalCount}
         </h1>
@@ -56,72 +64,85 @@ export default function OrdersPageClient({
           className={`${styles.ordersList} ${openOrder ? styles.ordersListNarrow : ''}`}
         >
           <AnimatePresence>
-            {initialOrders.map((order) => {
-              const isActive = order.id === openOrderId
-              const usd = calculateTotal(order.products, 'USD')
-              const uah = calculateTotal(order.products, 'UAH')
+            {initialOrders.length === 0 ? (
+              <motion.div
+                className={styles.emptyState}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <EmptyState
+                  title={t('not_found')}
+                  description={t('not_found_desc')}
+                />
+              </motion.div>
+            ) : (
+              initialOrders.map((order) => {
+                const isActive = order.id === openOrderId
+                const usd = calculateTotal(order.products, 'USD')
+                const uah = calculateTotal(order.products, 'UAH')
 
-              return (
-                <motion.div
-                  key={order.id}
-                  className={`${styles.orderItem} ${isActive ? styles.orderItemActive : ''}`}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: -80 }}
-                  transition={{ duration: 0.22 }}
-                  onClick={() => handleOrderClick(order.id)}
-                >
-                  <div className={styles.orderTitle}>
-                    <TruncatedText text={order.title} maxLength={35} />
-                  </div>
-
-                  <div className={styles.productsCount}>
-                    <div className={styles.listIcon}>☰</div>
-                    <div className={styles.countInfo}>
-                      <strong>{order.products.length}</strong>
-                      <span>{t('products_count')}</span>
+                return (
+                  <motion.div
+                    key={order.id}
+                    className={`${styles.orderItem} ${isActive ? styles.orderItemActive : ''}`}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: -80 }}
+                    transition={{ duration: 0.22 }}
+                    onClick={() => handleOrderClick(order.id)}
+                  >
+                    <div className={styles.orderTitle}>
+                      <TruncatedText text={order.title} maxLength={35} />
                     </div>
-                  </div>
 
-                  <div className={styles.dates}>
-                    <span className={styles.dateShort}>
-                      {String(order.products.length).padStart(2, '0')} /{' '}
-                      {String(20).padStart(2, '0')}
-                    </span>
-                    <span className={styles.dateLong}>
-                      {formatDateForOrder(order.date)}
-                    </span>
-                  </div>
+                    <div className={styles.productsCount}>
+                      <div className={styles.listIcon}>☰</div>
+                      <div className={styles.countInfo}>
+                        <strong>{order.products.length}</strong>
+                        <span>{t('products_count')}</span>
+                      </div>
+                    </div>
 
-                  <div className={styles.prices}>
-                    {usd > 0 && (
-                      <span className={styles.priceUsd}>
-                        {usd.toLocaleString('ru-RU')} $
+                    <div className={styles.dates}>
+                      <span className={styles.dateShort}>
+                        {String(order.products.length).padStart(2, '0')} /{' '}
+                        {String(20).padStart(2, '0')}
                       </span>
-                    )}
-                    {uah > 0 && (
-                      <span className={styles.priceUah}>
-                        {uah.toLocaleString('ru-RU')} UAH
+                      <span className={styles.dateLong}>
+                        {formatDateForOrder(order.date)}
                       </span>
-                    )}
-                  </div>
+                    </div>
 
-                  <div className={styles.actionsCell}>
-                    <button
-                      className={styles.deleteBtn}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        dispatch(selectOrder(order.id))
-                      }}
-                      aria-label={t('delete_btn')}
-                    >
-                      🗑
-                    </button>
-                  </div>
-                  {isActive && <div className={styles.chevron}>›</div>}
-                </motion.div>
-              )
-            })}
+                    <div className={styles.prices}>
+                      {usd > 0 && (
+                        <span className={styles.priceUsd}>
+                          {usd.toLocaleString('ru-RU')} $
+                        </span>
+                      )}
+                      {uah > 0 && (
+                        <span className={styles.priceUah}>
+                          {uah.toLocaleString('ru-RU')} UAH
+                        </span>
+                      )}
+                    </div>
+
+                    <div className={styles.actionsCell}>
+                      <button
+                        className={styles.deleteBtn}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          dispatch(selectOrder(order.id))
+                        }}
+                        aria-label={t('delete_btn')}
+                      >
+                        <TrashIcon />
+                      </button>
+                    </div>
+                    {isActive && <div className={styles.chevron}>›</div>}
+                  </motion.div>
+                )
+              })
+            )}
           </AnimatePresence>
         </div>
 
@@ -173,7 +194,7 @@ export default function OrdersPageClient({
                       <div className={styles.productMeta}>
                         <TruncatedText
                           text={product.title}
-                          maxLength={25}
+                          maxLength={15}
                           className={styles.productName}
                         />
                         <span className={styles.productSn}>
@@ -187,7 +208,7 @@ export default function OrdersPageClient({
                         className={styles.productDelBtn}
                         aria-label={t('delete_btn')}
                       >
-                        🗑
+                        <TrashIcon />
                       </button>
                     </div>
                   ))

@@ -1,11 +1,9 @@
 import { GET_PRODUCTS } from '@/entities/product/api/product.queries'
 import ProductsPageClient from '@/entities/product/ui/products/products-page-client'
-import { EmptyState } from '@/shared/ui/empty-state/empty-state'
 import { GetProductsData } from '@/entities/product/model/types'
 import { getClientAction } from '@/shared/api/actions'
 import { DEFAULT_ITEMS_LIMIT } from '@/shared/consts/consts'
 import { getPaginationParams } from '@/shared/lib/pagination/get-pagination-params'
-import { Loader } from '@/shared/ui/loader/loader'
 
 interface Props {
   searchParams: Promise<{ page?: string; type?: string; spec?: string }>
@@ -21,24 +19,15 @@ export default async function ProductsPage({ searchParams }: Props) {
   })
 
   if (error) {
-    return <Loader text="Подключение к серверу..." />
-  }
-
-  if (!data?.products?.items.length) {
-    return (
-      <EmptyState
-        title="Товары не найдены"
-        description="Список товаров пуст или не соответствует фильтрам."
-      />
-    )
+    throw new Error('Failed to fetch products')
   }
 
   return (
     <ProductsPageClient
-      initialProducts={data.products.items}
-      totalCount={data.products.totalCount}
-      allTypes={data.productTypes}
-      allSpecs={data.productSpecs ?? []}
+      initialProducts={data?.products.items ?? []}
+      totalCount={data?.products.totalCount ?? 0}
+      allTypes={data?.productTypes ?? []}
+      allSpecs={data?.productSpecs ?? []}
       pageSize={limit}
     />
   )

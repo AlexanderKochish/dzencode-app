@@ -2,8 +2,13 @@
 
 import { usePushNotifications } from '@/shared/hooks/use-push-notifications'
 import styles from './push-button.module.scss'
+import { useTranslations } from '@/shared/i18n/i18n-context'
+import { BellIcon } from '@/shared/ui/icons/bell-icon'
+import { BellOffIcon } from '@/shared/ui/icons/bell-off-icon'
+import { HourglassIcon } from '../icons/hourglass-icon'
 
 export const PushButton = () => {
+  const t = useTranslations('common')
   const { state, subscribe, unsubscribe } = usePushNotifications()
 
   if (state === 'unsupported' || state === 'loading') return null
@@ -11,8 +16,10 @@ export const PushButton = () => {
   if (state === 'processing') {
     return (
       <button className={styles.pushButton} disabled>
-        <span className={styles.icon}>⏳</span>
-        <span>Загрузка...</span>
+        <span className={styles.icon}>
+          <HourglassIcon />
+        </span>
+        <span>{t('loading')}</span>
       </button>
     )
   }
@@ -22,10 +29,12 @@ export const PushButton = () => {
       <button
         className={styles.pushButton}
         disabled
-        title="Уведомления заблокированы в настройках браузера"
+        title={t('push_blocked_tooltip')}
       >
-        <span className={styles.icon}>🔕</span>
-        <span>Заблокировано</span>
+        <span className={styles.icon}>
+          <BellOffIcon />
+        </span>
+        <span>{t('push_blocked_label')}</span>
       </button>
     )
   }
@@ -35,10 +44,12 @@ export const PushButton = () => {
       <button
         className={`${styles.pushButton} ${styles.active}`}
         onClick={unsubscribe}
-        title="Отключить push-уведомления"
+        title={t('push_disable_tooltip')}
       >
-        <span className={styles.icon}>🔔</span>
-        <span>Уведомления вкл.</span>
+        <span className={styles.icon}>
+          <BellIcon />
+        </span>
+        <span>{t('push_enabled_label')}</span>
       </button>
     )
   }
@@ -47,10 +58,12 @@ export const PushButton = () => {
     <button
       className={styles.pushButton}
       onClick={subscribe}
-      title="Включить push-уведомления"
+      title={t('push_enable_tooltip')}
     >
-      <span className={styles.icon}>🔕</span>
-      <span>Уведомления</span>
+      <span className={styles.icon}>
+        <BellOffIcon />
+      </span>
+      <span>{t('push_disabled_label')}</span>
     </button>
   )
 }

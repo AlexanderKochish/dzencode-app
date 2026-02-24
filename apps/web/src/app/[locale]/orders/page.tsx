@@ -4,8 +4,6 @@ import OrdersPageClient from '@/entities/order/ui/orders/orders-page-client'
 import { getClientAction } from '@/shared/api/actions'
 import { DEFAULT_ITEMS_LIMIT } from '@/shared/consts/consts'
 import { getPaginationParams } from '@/shared/lib/pagination/get-pagination-params'
-import { EmptyState } from '@/shared/ui/empty-state/empty-state'
-import { Loader } from '@/shared/ui/loader/loader'
 
 interface Props {
   searchParams: Promise<{ page?: string }>
@@ -21,22 +19,13 @@ export default async function OrdersPage({ searchParams }: Props) {
   })
 
   if (error) {
-    return <Loader text="Подключение к серверу..." />
-  }
-
-  if (!data?.orders?.items.length) {
-    return (
-      <EmptyState
-        title="Приходы не найдены"
-        description="Список приходов пуст."
-      />
-    )
+    throw new Error('Failed to fetch orders')
   }
 
   return (
     <OrdersPageClient
-      initialOrders={data.orders.items}
-      totalCount={data.orders.totalCount}
+      initialOrders={data?.orders.items ?? []}
+      totalCount={data?.orders.totalCount ?? 0}
       pageSize={limit}
     />
   )

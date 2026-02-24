@@ -20,12 +20,12 @@
     "framer-motion": "^12.34.0",
     "graphql": "^16.12.0",
     "next": "16.1.6",
-    "next-pwa": "^5.6.0",
     "react": "^19.2.4",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.4",
     "react-redux": "^9.2.0",
     "sass": "^1.97.3",
+    "server-only": "^0.0.1",
     "socket.io-client": "^4.8.3"
   },
   "devDependencies": {

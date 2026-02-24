@@ -6,6 +6,7 @@ import styles from './navigation.module.scss'
 import Image from 'next/image'
 import { Locale } from '@/shared/i18n/config'
 import { useTranslations } from '@/shared/i18n/i18n-context'
+import { GearIcon } from '@/shared/ui/icons/gear-icon'
 
 interface Props {
   locale: Locale
@@ -36,7 +37,9 @@ export const Navigation = ({ locale }: Props) => {
               className={styles.imgAvatar}
             />
           </div>
-          <button className={styles.settingsBtn}>⚙</button>
+          <button className={styles.settingsBtn}>
+            <GearIcon />
+          </button>
         </div>
       </div>
 

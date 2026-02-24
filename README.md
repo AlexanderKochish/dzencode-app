@@ -46,6 +46,7 @@ dzencode-app/
 git clone https://github.com/AlexanderKochish/dzencode-app.git
 cd dzencode-app
 cp .env.example .env
+npm install
 ```
 
 **2. Заполни `.env`:**
